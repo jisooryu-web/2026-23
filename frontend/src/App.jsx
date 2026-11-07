@@ -87,6 +87,7 @@ function App() {
 
   return (
     <div className="app">
+      <p>Hello World</p>
       <h1>AI 분리배출 판정</h1>
 
       <p>재활용품 사진을 업로드해 주세요.</p>
