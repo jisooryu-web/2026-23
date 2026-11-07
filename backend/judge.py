@@ -1,4 +1,4 @@
-"""관찰 결과 + 규칙표 → 판정. 배출 기준은 전부 rules.json에서만 가져온다."""
+"""관찰 결과 + 규칙표 → 판정. 배출 기준은 전부 rules.json에서만 가져옴"""
 import json, os
 
 MAX_ATTEMPTS = 3

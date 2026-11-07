@@ -1,4 +1,4 @@
-"""cases.json의 정답과 LLM 관찰 결과를 비교해 정확도를 출력한다.
+"""cases.json의 정답과 LLM 관찰 결과를 비교해 정확도를 출력
 실행: tests 폴더에서  python run_tests.py"""
 import json, os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
