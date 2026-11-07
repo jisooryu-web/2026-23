@@ -1,0 +1,48 @@
+{
+  "pet_bottle": {
+    "name": "투명 페트병",
+    "type": "state",
+    "disposal": "투명 페트병 전용 수거함",
+    "fallback_disposal": "플라스틱류",
+    "source": "https://scpm.seoul.go.kr/seoul-policy/evt0150 (기획팀 확인 필요)",
+    "checks": [
+      {"key": "is_transparent", "method": "photo", "ok": "true",
+       "redirect_disposal": "플라스틱류 (유색 페트병은 투명 페트병 전용 수거함 아님)"},
+      {"key": "liquid_inside", "method": "photo", "ok": "false",
+       "action": "내용물을 비우고 헹궈 주세요"},
+      {"key": "label_attached", "method": "photo", "ok": "false",
+       "action": "라벨을 떼어 주세요"}
+    ],
+    "warnings": []
+  },
+  "cup_noodle": {
+    "name": "컵라면 용기",
+    "type": "state",
+    "disposal": "재질별 분리배출 (스티로폼은 스티로폼류, 종이는 종이류)",
+    "fallback_disposal": "종량제봉투 (헹궈도 착색이 남는 경우)",
+    "source": "헷갈리는 재활용품, 정확히 버리는 법 (기획팀 출처 링크 기입)",
+    "checks": [
+      {"key": "food_residue", "method": "photo", "ok": "none",
+       "action": "남은 음식물을 비워 주세요"},
+      {"key": "red_oil_stain", "method": "photo", "ok": "false",
+       "action": "물로 헹궈 주세요"}
+    ],
+    "warnings": []
+  },
+  "broken_glass": {
+    "name": "깨진 유리",
+    "type": "info",
+    "disposal": "종량제봉투 (소량) / 특수규격마대 (다량)",
+    "source": "헷갈리는 재활용품, 정확히 버리는 법 (기획팀 출처 링크 기입)",
+    "checks": [],
+    "warnings": ["신문지로 감싼 뒤 '깨진 유리'라고 표시하세요", "맨손으로 만지지 마세요"]
+  },
+  "receipt": {
+    "name": "영수증",
+    "type": "info",
+    "disposal": "종량제봉투 (감열지라 종이류 재활용 불가)",
+    "source": "헷갈리는 재활용품, 정확히 버리는 법 (기획팀 출처 링크 기입)",
+    "checks": [],
+    "warnings": []
+  }
+}

@@ -1,0 +1,10 @@
+[
+  {"image": "images/pet_label.jpg",
+   "expected": {"item": "pet_bottle", "is_transparent": "true", "label_attached": "true", "liquid_inside": "false"}},
+  {"image": "images/pet_clean.jpg",
+   "expected": {"item": "pet_bottle", "is_transparent": "true", "label_attached": "false", "liquid_inside": "false"}},
+  {"image": "images/cup_dirty.jpg",
+   "expected": {"item": "cup_noodle", "food_residue": "heavy", "red_oil_stain": "true"}},
+  {"image": "images/receipt.jpg",
+   "expected": {"item": "receipt"}}
+]
