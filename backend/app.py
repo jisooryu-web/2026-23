@@ -3,6 +3,9 @@ import os, tempfile
 from flask import Flask, request, jsonify
 from vision import observe
 from judge import judge
+from flask_cors import CORS
+
+CORS(app, origins=os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(","))
 
 app = Flask(__name__)
 
