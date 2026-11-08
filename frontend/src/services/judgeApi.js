@@ -3,10 +3,10 @@ import responses from "./responses.json";
 
 // true: Mock 데이터 사용
 // false: 실제 백엔드 연결
-const USE_MOCK = true;
+const USE_MOCK = import.meta.env.VITE_USE_MOCK !== "false";
 
 // 백엔드 배포 후 실제 주소로 변경
-const API_URL = import.meta.env.VITE_API_BASE_URL;
+const API_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
 export async function judgeImage(image, attempt, mockStatus = "pass") {
   // 1. Mock 데이터 사용
@@ -23,6 +23,8 @@ export async function judgeImage(image, attempt, mockStatus = "pass") {
 
   formData.append("image", image);
   formData.append("attempt", String(attempt));
+  if (prevImage) formData.append("prev_image", prevImage);
+  if (prevItem) formData.append("prev_item", prevItem);
 
   const response = await fetch(`${API_URL}/judge`, {
     method: "POST",
