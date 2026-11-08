@@ -2,3 +2,5 @@ openai>=1.40
 python-dotenv>=1.0
 flask>=3.0
 flask-cors>=4.0
+pillow>=10.0
+pillow-heif>=0.16
