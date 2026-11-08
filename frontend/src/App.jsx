@@ -36,7 +36,7 @@ function App() {
 
     if (!selectedFile) return;
 
-    if (!selectedFile.type.startsWith("image/")) {
+    if (!selected.type.startsWith("image/") && !/\.(heic|heif)$/i.test(selected.name)) {
       setError("이미지 파일만 선택할 수 있습니다.");
       return;
     }
@@ -87,7 +87,6 @@ function App() {
 
   return (
     <div className="app">
-      <p>Hello World</p>
       <h1>AI 분리배출 판정</h1>
 
       <p>재활용품 사진을 업로드해 주세요.</p>
@@ -96,6 +95,7 @@ function App() {
         <input
           type="file"
           accept="image/*"
+          capture="environment"
           onChange={handleFileChange}
         />
 
