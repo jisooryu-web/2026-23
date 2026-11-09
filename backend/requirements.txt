@@ -3,4 +3,5 @@ python-dotenv>=1.0
 flask>=3.0
 flask-cors>=4.0
 pillow>=10.0
+# 아이폰 HEIC 사진 지원 (선택)
 pillow-heif>=0.16

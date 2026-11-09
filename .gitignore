@@ -210,3 +210,12 @@ pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,python
 >>>>>>> 648f7e8a5cbc1327212b25acb7fde8cb6b9583f2
+
+# 비밀값
+.env
+venv/
+__pycache__/
+# 테스트 사진 (개인 사진일 수 있음)
+tests/images/
+.DS_Store
+node_modules/
