@@ -36,7 +36,7 @@ function App() {
 
     if (!selectedFile) return;
 
-    if (!selected.type.startsWith("image/") && !/\.(heic|heif)$/i.test(selected.name)) {
+    if (!selectedFile.type.startsWith("image/") && !/\.(heic|heif)$/i.test(selectedFile.name)) {
       setError("이미지 파일만 선택할 수 있습니다.");
       return;
     }
