@@ -1,11 +1,26 @@
 """사진 → LLM 관찰 결과(JSON)"""
-import base64, json, os
+import base64, json, os, io
 from dotenv import load_dotenv
 from openai import OpenAI
- 
+from PIL import Image, ImageOps
+
+try:  # 아이폰 사진 용
+    from pillow_heif import register_heif_opener
+    register_heif_opener()
+except ImportError:
+    pass
+
 load_dotenv()
 client = OpenAI()  # reads OPENAI_API_KEY from .env
 MODEL = os.getenv("OPENAI_MODEL", "모델명")
+MAX_SIDE = 1024
+
+_client = None
+def _get_client():  #키 없어도 실행(임시용)
+    global _client
+    if _client is None:
+        _client = OpenAI()
+    return _client
  
 SYSTEM_PROMPT = """You are a visual inspector for a recycling assistant.
 Your ONLY job is to report what is visibly present in the photo.
@@ -85,10 +100,21 @@ Photo: a ramen cup photographed from the side with the lid half closed.
 {"item":"cup_noodle","confidence":0.85,"observations":{"is_transparent":"unknown","label_attached":"unknown","liquid_inside":"unknown","food_residue":"unknown","red_oil_stain":"unknown","material":"paper"},"notes":"Interior not visible because of the lid and side angle."}
 """
  
- 
-def _encode(path):
-    with open(path, "rb") as f:
-        return base64.b64encode(f.read()).decode()
+
+def prepare_image(data: bytes) -> bytes:
+    try:
+        img = Image.open(io.BytesIO(data))   # 메모리 효율성을 위해
+        img = ImageOps.exif_transpose(img)   # 회전 보정
+        img = img.convert("RGB")             # 색 형식 통일
+        img.thumbnail((MAX_SIDE, MAX_SIDE))  # 비율 유지하면서 축소
+    except Exception as e:
+        raise ValueError("unreadable image") from e
+    out = io.BytesIO()
+    img.save(out, format="JPEG", quality=85) # GPS 등 EXIF 제거 > 개인정보 보호
+    return out.getvalue()
+
+def _image_part(jpeg: bytes):
+    b64 = base64.b64encode(jpeg).decode()   # AI가 인식할 수 있는 형태로 수정
  
  
 def observe(image_path):
