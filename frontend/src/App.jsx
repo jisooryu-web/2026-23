@@ -1,86 +1,96 @@
-
 import { useState, useEffect } from "react";
 import JudgeResult from "./components/JudgeResult";
-import { judgeImage } from "./services/judgeApi";
+import { judgeImage, isMock } from "./services/judgeApi";
 import "./App.css";
 
+const MOCK_STATUSES = ["pass", "need_action", "retake", "question", "fallback", "different_item", "unsupported"];
+
 function App() {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(null);         // 지금 찍은 사진
   const [preview, setPreview] = useState(null);
-
-  const [attempt, setAttempt] = useState(1);
+  const [attempt, setAttempt] = useState(1);      // 몇 번째 촬영인지
+  const [firstFile, setFirstFile] = useState(null); // 처음 찍은 사진 (재촬영 전후 비교용)
+  const [firstItem, setFirstItem] = useState(null); // 처음 판정된 품목 (같은 물건인지 확인용)
+  const [answers, setAnswers] = useState({});     // 질문 답
   const [result, setResult] = useState(null);
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // Mock 테스트용 상태 선택
   const [mockStatus, setMockStatus] = useState("pass");
 
-  // 사진 미리보기 URL 관리
   useEffect(() => {
     if (!file) {
       setPreview(null);
       return;
     }
-
-    const imageUrl = URL.createObjectURL(file);
-    setPreview(imageUrl);
-
-    return () => URL.revokeObjectURL(imageUrl);
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
   }, [file]);
 
-  // 사진 선택
   function handleFileChange(event) {
-    const selectedFile = event.target.files[0];
-
-    if (!selectedFile) return;
-
+    const selected = event.target.files[0];
+    event.target.value = ""; // 같은 파일 다시 선택 가능
+    if (!selected) return;
     if (!selected.type.startsWith("image/") && !/\.(heic|heif)$/i.test(selected.name)) {
-      setError("이미지 파일만 선택할 수 있습니다.");
+      setError("이미지 파일만 선택할 수 있어요.");
       return;
     }
-
-    setFile(selectedFile);
+    setFile(selected);
     setResult(null);
     setError("");
-
-    // 같은 파일을 다시 선택할 수 있도록 초기화
-    event.target.value = "";
   }
 
-  // 판정 요청
-  async function handleJudge() {
+  async function runJudge(nextAnswers = answers) {
     if (!file) {
-      setError("먼저 사진을 선택해 주세요.");
+      setError("먼저 사진을 찍거나 선택해 주세요.");
       return;
     }
-
     try {
       setLoading(true);
       setError("");
-
-      const data = await judgeImage(
-        file,
+      const isRetake = attempt > 1;
+      const data = await judgeImage({
+        image: file,
         attempt,
-        mockStatus
-      );
-
+        prevImage: isRetake ? firstFile : null,
+        prevItem: isRetake ? firstItem : null,
+        answers: nextAnswers,
+        mockStatus,
+      });
+      // 첫 촬영에서 지원 품목이 나오면 "처음 사진"으로 기억
+      if (!isRetake && data.judgement.status !== "unsupported") {
+        setFirstFile(file);
+        setFirstItem(data.judgement.item);
+      }
       setResult(data);
     } catch (err) {
-      setError(err.message || "오류가 발생했습니다.");
+      setError(err.message || "오류가 발생했어요.");
     } finally {
       setLoading(false);
     }
   }
 
-  // 재촬영
-  function handleRetake() {
-    if (attempt >= 3) return;
+  // 질문에 답하면 같은 사진으로 다시 판정 (촬영 횟수는 그대로)
+  function handleAnswer(key, value) {
+    const next = { ...answers, [key]: value };
+    setAnswers(next);
+    runJudge(next);
+  }
 
-    setAttempt((prev) => prev + 1);
+  // countsAsAttempt: 처리 후 재촬영이면 true, 다른 물건을 찍어서 다시 찍는 거면 false
+  function handleRetake(countsAsAttempt) {
+    if (countsAsAttempt) setAttempt((prev) => prev + 1);
     setFile(null);
-    setPreview(null);
+    setResult(null);
+    setError("");
+  }
+
+  function handleRestart() {
+    setFile(null);
+    setAttempt(1);
+    setFirstFile(null);
+    setFirstItem(null);
+    setAnswers({});
     setResult(null);
     setError("");
   }
@@ -88,59 +98,48 @@ function App() {
   return (
     <div className="app">
       <h1>AI 분리배출 판정</h1>
+      <p>{attempt === 1 ? "버릴 물건을 찍어 주세요." : "처리한 뒤 같은 물건을 다시 찍어 주세요."}</p>
 
-      <p>재활용품 사진을 업로드해 주세요.</p>
-
-      <div className="upload-area">
-        <input
-          type="file"
-          accept="image/*"
-          capture="environment"
-          onChange={handleFileChange}
-        />
-
-        {preview && (
-          <div className="preview">
-            <img src={preview} alt="업로드한 사진" />
+      {!result && (
+        <>
+          <div className="upload-area">
+            {/* capture: 휴대폰에서 바로 후면 카메라 실행 */}
+            <input type="file" accept="image/*" capture="environment" onChange={handleFileChange} />
+            {preview && (
+              <div className="preview">
+                <img src={preview} alt="업로드한 사진" />
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      <p>촬영 횟수: {attempt} / 3</p>
-
-      <button
-        onClick={handleJudge}
-        disabled={!file || loading}
-      >
-        {loading ? "판정 중..." : "판정하기"}
-      </button>
+          <button onClick={() => runJudge()} disabled={!file || loading}>
+            {loading ? "AI가 확인하는 중..." : "판정하기"}
+          </button>
+        </>
+      )}
 
       {error && <p className="error">{error}</p>}
 
-      {/* Mock 테스트용 */}
-      <div className="mock-test">
-        <h3>판정 결과 테스트</h3>
-
-        <select
-          value={mockStatus}
-          onChange={(event) => setMockStatus(event.target.value)}
-        >
-          <option value="pass">pass</option>
-          <option value="need_action">need_action</option>
-          <option value="retake">retake</option>
-          <option value="question">question</option>
-          <option value="fallback">fallback</option>
-          <option value="unsupported">unsupported</option>
-        </select>
-
-        <p>선택한 Mock 응답: {mockStatus}</p>
-      </div>
-
       <JudgeResult
+        key={`${attempt}-${result?.judgement?.status}`}
         result={result}
+        loading={loading}
         onRetake={handleRetake}
-        attempt={attempt}
+        onAnswer={handleAnswer}
+        onRestart={handleRestart}
       />
+
+      {/* Mock 모드에서만 보이는 테스트 도구 */}
+      {isMock && (
+        <div className="mock-test">
+          <h3>Mock 응답 선택 (백엔드 없이 화면 테스트)</h3>
+          <select value={mockStatus} onChange={(e) => setMockStatus(e.target.value)}>
+            {MOCK_STATUSES.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </div>
+      )}
     </div>
   );
 }
