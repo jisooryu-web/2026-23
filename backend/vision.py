@@ -1,4 +1,5 @@
 """사진 → LLM 관찰 결과(JSON)"""
+open -e vision.py
 import base64, json, os, io
 from dotenv import load_dotenv
 from openai import OpenAI
