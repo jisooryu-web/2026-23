@@ -2,7 +2,7 @@
 실행: tests 폴더에서  python run_tests.py"""
 import json, os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
-from vision import observe
+from vision import observe_file
 from judge import judge
 
 here = os.path.dirname(__file__)
@@ -10,7 +10,7 @@ cases = json.load(open(os.path.join(here, "cases.json"), encoding="utf-8"))
 item_ok, field_ok, field_total, rows = 0, 0, 0, []
 
 for c in cases:
-    r = observe(os.path.join(here, c["image"]))
+    r = observe_file(os.path.join(here, c["image"]))
     exp, obs = c["expected"], r.get("observations", {})
     hit = r.get("item") == exp["item"]
     item_ok += hit
