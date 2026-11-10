@@ -143,7 +143,6 @@ def observe(image: bytes, prev_image: bytes | None = None) -> dict:
 
     res = _get_client().chat.completions.create(
         model=MODEL,
-        temperature=0,
         response_format={"type": "json_object"},
         messages=[{"role": "system", "content": SYSTEM_PROMPT},
                   {"role": "user", "content": content}],

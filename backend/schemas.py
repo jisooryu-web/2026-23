@@ -75,7 +75,7 @@ class RuleSet(BaseModel):
 
 class Observation(BaseModel):
     item: str = "unsupported"
-    confidence: float = 0.0
+    confidence: Optional[float] = None 
     same_item: Literal["true", "false", "unknown"] = "unknown"
     observations: Dict[str, str] = {}
     notes: str = ""

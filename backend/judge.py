@@ -13,6 +13,7 @@ import json, os
 from schemas import RuleSet
 
 MAX_ATTEMPTS = 3
+CONFIRM_BELOW = 0.6
 with open(os.path.join(os.path.dirname(__file__), "rules.json"), encoding="utf-8") as f:
     RULESET = RuleSet.model_validate(json.load(f))   # 구조가 틀리면 여기서 바로 오류 (서버가 안 켜짐)
 RULES = RULESET.items                                # {"pet_bottle": Rule, ...}
@@ -30,6 +31,9 @@ MESSAGES = {
     "different_item": "처음 찍은 물건과 다른 물건 같아요. 같은 물건을 다시 찍어 주세요.",
     "unsupported": "아직 지원하지 않는 품목이에요.",
 }
+
+
+NOT_CONFIRMED_MESSAGE = "어떤 물건인지 확인하지 못했어요. 물건 전체가 잘 보이게 다시 찍어 주세요."
 
 
 def _done(out, status):
@@ -58,6 +62,21 @@ def judge(result, attempt=1, answers=None, prev_item=None):
     rule, obs = RULES[item], result.get("observations", {})
     out.update({"name": rule.name, "type": rule.type, "disposal": rule.disposal,
                 "warnings": list(rule.warnings), "source": rule.source})
+
+    # AI가 품목을 확신하지 못하면, 기준을 적용하기 전에 사용자에게 품목부터 확인
+    confirm_key = f"confirm_{item}"                      # 예: confirm_pet_bottle
+    confidence = result.get("confidence")
+    if confidence is not None and confidence < CONFIRM_BELOW:
+        answer = answers.get(confirm_key)
+        if answer is None:                               # 아직 안 물어봄 → 질문하고 끝
+            out["questions"].append({"key": confirm_key, "text": f"사진 속 물건이 '{rule.name}' 맞나요?",
+                                     "options": DEFAULT_OPTIONS})
+            return _done(out, "question")
+        if answer == "false":                            # 아니라고 함 → 판정하지 않음
+            out = {k: out[k] for k in ("item", "attempt", "max_attempts", "checklist", "questions", "retake", "warnings")}
+            _done(out, "unsupported")
+            out["message"] = NOT_CONFIRMED_MESSAGE
+            return out
 
     if rule.type == "info":
         return _done(out, "pass")

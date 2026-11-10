@@ -53,6 +53,16 @@ ok = res.status_code == 200 and "name" not in res.json()["judgement"]
 failed += not ok
 print("O" if ok else "X", "지원 안 하는 품목은 name 없이 응답 →", res.json()["judgement"]["status"])
 
+
+# AI가 품목을 확신하지 못하면 확인 질문
+server.observe = lambda cur, prev=None: {**FAKE, "confidence": 0.3}
+res = client.post("/judge", files={"image": jpg()})
+q = res.json()["judgement"]["questions"]
+ok = res.status_code == 200 and q and q[0]["key"] == "confirm_pet_bottle"
+failed += not ok
+print("O" if ok else "X", "확신 낮음 → 품목 확인 질문 →", q[0]["text"] if q else None)
+
+
 # AI가 실패하면 502
 def broken(cur, prev=None):
     raise RuntimeError("no key")

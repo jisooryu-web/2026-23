@@ -25,6 +25,10 @@ cases = [
     ("질문: 아직 답 안 함", PET_CLEAN, 1, None, {}, "question"),
     ("질문: '아니요' → 헹구기가 체크리스트로", PET_CLEAN, 1, None, NO, "need_action"),
     ("질문: 라벨도 붙어 있으면 질문이 먼저", PET_LABEL, 1, None, {}, "question"),
+    ("확신 낮음: 품목 확인 질문", {**PET_CLEAN, "confidence": 0.4}, 1, None, YES, "question"),
+    ("확신 낮음: '예' → 평소대로 판정", {**PET_CLEAN, "confidence": 0.4}, 1, None, {**YES, "confirm_pet_bottle": "true"}, "pass"),
+    ("확신 낮음: '아니요' → 판정 안 함", {**PET_CLEAN, "confidence": 0.4}, 1, None, {"confirm_pet_bottle": "false"}, "unsupported"),
+    ("확신 높음: 확인 질문 없음", {**PET_CLEAN, "confidence": 0.9}, 1, None, YES, "pass"),
 ]
 
 failed = 0
