@@ -5,28 +5,25 @@
 """
 import json
 import logging
-import os
 import time
 from typing import Optional
 
-from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from config import ALLOWED_ORIGINS, MAX_BYTES
 from judge import judge
 from schemas import ErrorResponse, JudgeResponse, Observation
 from vision import observe, prepare_image
 
-load_dotenv()
 log = logging.getLogger("uvicorn.error")
-MAX_BYTES = 15 * 1024 * 1024                    # 업로드 최대 15MB
 
 app = FastAPI(title="분리배출 판정 API", version="0.2.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")],
+    allow_origins=ALLOWED_ORIGINS,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
@@ -89,7 +86,7 @@ def judge_api(
     except ValueError:                                  # JSONDecodeError도 ValueError의 한 종류
         raise ApiError("BAD_REQUEST", "요청 형식이 올바르지 않아요.", 400)
 
-        if observation is not None:
+    if observation is not None:
         # 질문에 답한 재판정: 사진은 그대로이니 직전 관찰을 다시 쓰고 AI는 부르지 않는다
         try:
             obs = Observation.model_validate_json(observation).model_dump()

@@ -10,10 +10,10 @@ status 종류 (프론트 화면 분기 기준, API.md 참고)
   unsupported    지원하지 않는 품목
 """
 import json, os
+
+from config import CONFIRM_BELOW, MAX_ATTEMPTS
 from schemas import RuleSet
 
-MAX_ATTEMPTS = 3
-CONFIRM_BELOW = 0.6
 with open(os.path.join(os.path.dirname(__file__), "rules.json"), encoding="utf-8") as f:
     RULESET = RuleSet.model_validate(json.load(f))   # 구조가 틀리면 여기서 바로 오류 (서버가 안 켜짐)
 RULES = RULESET.items                                # {"pet_bottle": Rule, ...}
