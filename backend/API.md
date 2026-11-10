@@ -1,5 +1,12 @@
 # API 명세 (프론트 ↔ 백엔드 약속)
 
+## 실행과 문서
+
+- 서버: `cd backend && uvicorn app:app --reload --port 5001` (FastAPI)
+- 자동 문서·테스트 화면: http://127.0.0.1:5001/docs
+- 요청·응답 모양의 기준은 `backend/schemas.py`. 이 문서와 다르면 schemas.py가 맞음
+- 규칙표 `rules.json` 구조도 `schemas.py`의 `RuleSet`을 따름. 구조가 틀리면 서버가 켜지지 않고 어느 줄이 틀렸는지 알려줌
+
 ## POST /judge
 
 사진 한 장을 판정한다. 요청은 `multipart/form-data`.
