@@ -48,6 +48,7 @@ class Check(BaseModel):
 class Rule(BaseModel):
     model_config = ConfigDict(extra="forbid")
     name: str
+    ai_hint: str                                # AI 프롬프트에 들어갈 품목 설명 (영어)
     type: Literal["state", "info"]
     disposal: str
     fallback_disposal: Optional[str] = None
@@ -65,10 +66,27 @@ class Rule(BaseModel):
         return self
 
 
+STATUSES = ("pass", "need_action", "retake", "question", "fallback", "different_item", "unsupported")
+# rules.json "messages"에 꼭 있어야 하는 문구: 상태 7개 + 품목 확인 관련 2개
+REQUIRED_MESSAGES = set(STATUSES) | {"not_confirmed", "confirm_question"}
+
+
 class RuleSet(BaseModel):
     model_config = ConfigDict(extra="forbid")
     version: str
+    messages: Dict[str, str]                    # 화면 문구. 기획팀이 파이썬 없이 고칠 수 있게
     items: Dict[str, Rule]
+
+    @model_validator(mode="after")
+    def _check_messages(self):
+        missing = REQUIRED_MESSAGES - set(self.messages)
+        if missing:
+            raise ValueError(f"messages에 빠진 문구가 있어요: {sorted(missing)}")
+        if "{name}" not in self.messages["confirm_question"]:
+            raise ValueError("confirm_question 문구에는 품목 이름 자리 {name}이 필요해요")
+        if "unsupported" in self.items:
+            raise ValueError("'unsupported'는 품목 이름으로 쓸 수 없어요 (지원 안 함을 뜻하는 예약어)")
+        return self
 
 
 # ---------- 2) AI 관찰 결과 ----------
@@ -95,8 +113,7 @@ class Question(BaseModel):
 
 
 class Judgement(BaseModel):
-    status: Literal["pass", "need_action", "retake", "question",
-                    "fallback", "different_item", "unsupported"]
+    status: Literal[STATUSES]
     message: str
     item: str
     attempt: int

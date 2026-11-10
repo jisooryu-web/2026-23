@@ -10,30 +10,17 @@ status 종류 (프론트 화면 분기 기준, API.md 참고)
   unsupported    지원하지 않는 품목
 """
 import json, os
+
+from config import CONFIRM_BELOW, MAX_ATTEMPTS
 from schemas import RuleSet
 
-MAX_ATTEMPTS = 3
-CONFIRM_BELOW = 0.6
 with open(os.path.join(os.path.dirname(__file__), "rules.json"), encoding="utf-8") as f:
     RULESET = RuleSet.model_validate(json.load(f))   # 구조가 틀리면 여기서 바로 오류 (서버가 안 켜짐)
 RULES = RULESET.items                                # {"pet_bottle": Rule, ...}
+MESSAGES = RULESET.messages                          # 화면 문구도 rules.json에서
 
-# 질문 선택지 기본값. 조건마다 rules.json의 "options"로 바꿀 수 있음
-# 예: "내용물을 비우셨나요?" → [{"label": "예", "value": "false"}, {"label": "아니요", "value": "true"}]
+# 질문 선택지 기본값. ...
 DEFAULT_OPTIONS = [{"label": "예", "value": "true"}, {"label": "아니요", "value": "false"}]
-
-MESSAGES = {
-    "pass": "분리배출할 수 있어요!",
-    "need_action": "버리기 전에 아래 항목을 처리하고 다시 찍어 주세요.",
-    "retake": "잘 보이지 않는 부분이 있어요. 밝은 곳에서, 안쪽이 보이게 다시 찍어 주세요.",
-    "question": "사진으로는 확인하기 어려운 부분이 있어요. 아래 질문에 답해 주세요.",
-    "fallback": "여러 번 확인했지만 처리가 어려워 보여요. 아래 방법으로 배출해 주세요.",
-    "different_item": "처음 찍은 물건과 다른 물건 같아요. 같은 물건을 다시 찍어 주세요.",
-    "unsupported": "아직 지원하지 않는 품목이에요.",
-}
-
-
-NOT_CONFIRMED_MESSAGE = "어떤 물건인지 확인하지 못했어요. 물건 전체가 잘 보이게 다시 찍어 주세요."
 
 
 def _done(out, status):
@@ -69,13 +56,13 @@ def judge(result, attempt=1, answers=None, prev_item=None):
     if confidence is not None and confidence < CONFIRM_BELOW:
         answer = answers.get(confirm_key)
         if answer is None:                               # 아직 안 물어봄 → 질문하고 끝
-            out["questions"].append({"key": confirm_key, "text": f"사진 속 물건이 '{rule.name}' 맞나요?",
+            out["questions"].append({"key": confirm_key, "text": MESSAGES["confirm_question"].replace("{name}", rule.name),
                                      "options": DEFAULT_OPTIONS})
             return _done(out, "question")
         if answer == "false":                            # 아니라고 함 → 판정하지 않음
             out = {k: out[k] for k in ("item", "attempt", "max_attempts", "checklist", "questions", "retake", "warnings")}
             _done(out, "unsupported")
-            out["message"] = NOT_CONFIRMED_MESSAGE
+            out["message"] = MESSAGES["not_confirmed"]
             return out
 
     if rule.type == "info":

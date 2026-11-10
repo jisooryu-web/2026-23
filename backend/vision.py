@@ -1,10 +1,11 @@
 """Photo -> observation JSON. The model only describes what is visible; it never decides disposal."""
 from __future__ import annotations
 
-import base64, io, json, os
-from dotenv import load_dotenv
+import base64, io, json
 from openai import OpenAI
 from PIL import Image, ImageOps
+
+from config import MAX_PIXELS, MAX_SIDE, MODEL
 
 try:  # iPhone HEIC support (optional)
     from pillow_heif import register_heif_opener
@@ -12,10 +13,6 @@ try:  # iPhone HEIC support (optional)
 except ImportError:
     pass
 
-load_dotenv()
-MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-MAX_SIDE = 1024          # long side in px; enough for residue/stains, cuts cost and latency
-MAX_PIXELS = 50_000_000  # reject huge images before decoding (a 50MP phone photo is the upper end)
 _client = None
 
 
