@@ -40,7 +40,8 @@ function App() {
     setError("");
   }
 
-  async function runJudge(nextAnswers = answers) {
+  // reuseObservation: 질문에 답할 때 직전 AI 관찰을 다시 써서 AI 호출을 생략
+  async function runJudge(nextAnswers = answers, reuseObservation = null) {
     if (!file) {
       setError("먼저 사진을 찍거나 선택해 주세요.");
       return;
@@ -55,6 +56,7 @@ function App() {
         prevImage: isRetake ? firstFile : null,
         prevItem: isRetake ? firstItem : null,
         answers: nextAnswers,
+        observation: reuseObservation,
         mockStatus,
       });
       // 첫 촬영에서 지원 품목이 나오면 "처음 사진"으로 기억
@@ -74,7 +76,7 @@ function App() {
   function handleAnswer(key, value) {
     const next = { ...answers, [key]: value };
     setAnswers(next);
-    runJudge(next);
+    runJudge(next, result?.observation ?? null);
   }
 
   // countsAsAttempt: 처리 후 재촬영이면 true, 다른 물건을 찍어서 다시 찍는 거면 false

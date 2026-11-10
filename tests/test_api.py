@@ -63,6 +63,15 @@ failed += not ok
 print("O" if ok else "X", "확신 낮음 → 품목 확인 질문 →", q[0]["text"] if q else None)
 
 
+# 질문에 답할 때 직전 관찰을 보내면 AI를 부르지 않음 (사진도 필요 없음)
+calls = []
+server.observe = lambda cur, prev=None: calls.append(1) or FAKE
+res = client.post("/judge", data={"observation": json.dumps(FAKE), "answers": '{"rinsed": "true"}'})
+ok = res.status_code == 200 and status_of(res) == "need_action" and not calls
+failed += not ok
+print("O" if ok else "X", "관찰 재사용 → AI 호출 없이 판정 →", status_of(res), "/ AI 호출", len(calls), "회")
+
+
 # AI가 실패하면 502
 def broken(cur, prev=None):
     raise RuntimeError("no key")

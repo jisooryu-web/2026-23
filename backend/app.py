@@ -6,6 +6,7 @@
 import json
 import logging
 import os
+import time
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -75,8 +76,10 @@ def judge_api(
     answers: str = Form("{}"),
     prev_item: Optional[str] = Form(None),
     prev_image: Optional[UploadFile] = File(None),
+    observation: Optional[str] = Form(None),
 ):
-    if image is None:
+    started = time.perf_counter()
+    if image is None and observation is None:
         raise ApiError("NO_IMAGE", "사진이 없어요.", 400)
     attempt = max(1, attempt)
     try:
@@ -86,21 +89,34 @@ def judge_api(
     except ValueError:                                  # JSONDecodeError도 ValueError의 한 종류
         raise ApiError("BAD_REQUEST", "요청 형식이 올바르지 않아요.", 400)
 
-    # 사진은 앱에서 파일로 저장하지 않고 메모리에서만 처리한다 (개인정보)
-    try:
-        cur = prepare_image(read_upload(image))
-        prev = prepare_image(read_upload(prev_image)) if prev_image else None
-    except ValueError:
-        raise ApiError("BAD_IMAGE", "사진을 읽을 수 없어요. JPG나 PNG로 다시 올려 주세요.", 400)
+        if observation is not None:
+        # 질문에 답한 재판정: 사진은 그대로이니 직전 관찰을 다시 쓰고 AI는 부르지 않는다
+        try:
+            obs = Observation.model_validate_json(observation).model_dump()
+        except ValueError:
+            raise ApiError("BAD_REQUEST", "요청 형식이 올바르지 않아요.", 400)
+    else:
+        # 사진은 앱에서 파일로 저장하지 않고 메모리에서만 처리한다 (개인정보)
+        try:
+            cur = prepare_image(read_upload(image))
+            prev = prepare_image(read_upload(prev_image)) if prev_image else None
+        except ValueError:
+            raise ApiError("BAD_IMAGE", "사진을 읽을 수 없어요. JPG나 PNG로 다시 올려 주세요.", 400)
 
-    try:
-        observation = Observation.model_validate(observe(cur, prev)).model_dump()
-    except Exception:                                   # 키 없음, 네트워크, AI가 이상한 JSON을 줌 등
-        log.exception("vision failed")
-        raise ApiError("AI_FAILED", "AI 분석에 실패했어요. 잠시 후 다시 시도해 주세요.", 502)
+        try:
+            obs = Observation.model_validate(observe(cur, prev)).model_dump()
+        except Exception:                               # 키 없음, 네트워크, AI가 이상한 JSON을 줌 등
+            log.exception("vision failed")
+            raise ApiError("AI_FAILED", "AI 분석에 실패했어요. 잠시 후 다시 시도해 주세요.", 502)
 
-    return {"observation": observation,
-            "judgement": judge(observation, attempt, answer_dict, prev_item or None)}
+    result = judge(obs, attempt, answer_dict, prev_item or None)
+    # 요청마다 한 줄 기록 (사진·개인정보 없음). 실제 사용 중 정확도·속도를 볼 수 있다
+    log.info("judge %s", json.dumps({
+        "status": result["status"], "item": obs["item"], "confidence": obs["confidence"],
+        "attempt": attempt, "reused": observation is not None,
+        "ms": round((time.perf_counter() - started) * 1000),
+    }, ensure_ascii=False))
+    return {"observation": obs, "judgement": result}
 
 
 if __name__ == "__main__":                              # python app.py 로도 실행 가능

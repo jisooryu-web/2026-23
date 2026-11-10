@@ -15,6 +15,7 @@ except ImportError:
 load_dotenv()
 MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 MAX_SIDE = 1024          # long side in px; enough for residue/stains, cuts cost and latency
+MAX_PIXELS = 50_000_000  # reject huge images before decoding (a 50MP phone photo is the upper end)
 _client = None
 
 
@@ -116,7 +117,9 @@ Photo: a ramen cup photographed from the side with the lid half closed.
 def prepare_image(data: bytes) -> bytes:
     """Any uploaded image (JPEG/PNG/HEIC...) -> rotated, resized JPEG bytes. Raises ValueError if unreadable."""
     try:
-        img = Image.open(io.BytesIO(data))
+        img = Image.open(io.BytesIO(data))       # reads only the header here, pixels are not decoded yet
+        if img.width * img.height > MAX_PIXELS:   # e.g. a 20000x20000 PNG would take ~1.2GB of memory
+            raise ValueError("image too large in pixels")
         img = ImageOps.exif_transpose(img)        # respect phone rotation
         img = img.convert("RGB")
         img.thumbnail((MAX_SIDE, MAX_SIDE))

@@ -9,7 +9,7 @@ const API_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
 export const isMock = USE_MOCK;
 
-export async function judgeImage({ image, attempt, prevImage = null, prevItem = null, answers = {}, mockStatus = "pass" }) {
+export async function judgeImage({ image, attempt, prevImage = null, prevItem = null, answers = {}, observation = null, mockStatus = "pass" }) {
   if (USE_MOCK) {
     await new Promise((r) => setTimeout(r, 400)); // 로딩 화면 확인용
     const mock = structuredClone(Object.keys(answers).length ? responses.pass : responses[mockStatus]);
@@ -18,9 +18,14 @@ export async function judgeImage({ image, attempt, prevImage = null, prevItem = 
   }
 
   const formData = new FormData();
-  formData.append("image", image);
+  if (observation) {
+    // 질문 답변: 사진 대신 직전 관찰을 보내면 서버가 AI를 다시 부르지 않음 (빠르고 비용 0)
+    formData.append("observation", JSON.stringify(observation));
+  } else {
+    formData.append("image", image);
+  }
   formData.append("attempt", String(attempt));
-  if (prevImage) formData.append("prev_image", prevImage);
+  if (prevImage && !observation) formData.append("prev_image", prevImage);
   if (prevItem) formData.append("prev_item", prevItem);
   if (Object.keys(answers).length) formData.append("answers", JSON.stringify(answers));
 
