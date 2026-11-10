@@ -6,23 +6,30 @@ from judge import judge
 PET_LABEL = {"item": "pet_bottle", "observations": {"is_transparent": "true", "label_attached": "true", "liquid_inside": "false"}}
 PET_CLEAN = {"item": "pet_bottle", "observations": {"is_transparent": "true", "label_attached": "false", "liquid_inside": "false"}}
 
-# (이름, 관찰 결과, attempt, prev_item, 기대 status)
+PET_HIDDEN = {"item": "pet_bottle", "observations": {"is_transparent": "true", "label_attached": "unknown", "liquid_inside": "false"}}
+YES = {"rinsed": "true"}      # "내부를 물로 헹구셨나요?"에 '예'
+NO = {"rinsed": "false"}      # '아니요'
+
+# (이름, 관찰 결과, attempt, prev_item, 질문 답, 기대 status)
 cases = [
-    ("라벨 붙은 투명 페트병", PET_LABEL, 1, None, "need_action"),
-    ("깨끗한 투명 페트병", PET_CLEAN, 1, None, "pass"),
-    ("라벨이 안 보임", {"item": "pet_bottle", "observations": {"is_transparent": "true", "label_attached": "unknown", "liquid_inside": "false"}}, 1, None, "retake"),
-    ("3번째에도 라벨이 안 보임", {"item": "pet_bottle", "observations": {"is_transparent": "true", "label_attached": "unknown", "liquid_inside": "false"}}, 3, None, "fallback"),
-    ("3번째에도 착색 남음", {"item": "cup_noodle", "observations": {"food_residue": "none", "red_oil_stain": "true"}}, 3, None, "fallback"),
-    ("재촬영: 같은 페트병, 라벨 제거됨", PET_CLEAN, 2, "pet_bottle", "pass"),
-    ("재촬영: 다른 품목을 찍음", {"item": "receipt", "observations": {}}, 2, "pet_bottle", "different_item"),
-    ("재촬영: AI가 다른 물건이라고 봄", {**PET_CLEAN, "same_item": "false"}, 2, "pet_bottle", "different_item"),
-    ("영수증", {"item": "receipt", "observations": {}}, 1, None, "pass"),
-    ("숟가락", {"item": "unsupported"}, 1, None, "unsupported"),
+    ("라벨 붙은 투명 페트병", PET_LABEL, 1, None, YES, "need_action"),
+    ("깨끗한 투명 페트병", PET_CLEAN, 1, None, YES, "pass"),
+    ("라벨이 안 보임", PET_HIDDEN, 1, None, YES, "retake"),
+    ("3번째에도 라벨이 안 보임", PET_HIDDEN, 3, None, YES, "fallback"),
+    ("3번째에도 착색 남음", {"item": "cup_noodle", "observations": {"food_residue": "none", "red_oil_stain": "true"}}, 3, None, {}, "fallback"),
+    ("재촬영: 같은 페트병, 라벨 제거됨", PET_CLEAN, 2, "pet_bottle", YES, "pass"),
+    ("재촬영: 다른 품목을 찍음", {"item": "receipt", "observations": {}}, 2, "pet_bottle", {}, "different_item"),
+    ("재촬영: AI가 다른 물건이라고 봄", {**PET_CLEAN, "same_item": "false"}, 2, "pet_bottle", YES, "different_item"),
+    ("영수증", {"item": "receipt", "observations": {}}, 1, None, {}, "pass"),
+    ("숫가락", {"item": "unsupported"}, 1, None, {}, "unsupported"),
+    ("질문: 아직 답 안 함", PET_CLEAN, 1, None, {}, "question"),
+    ("질문: '아니요' → 헹구기가 체크리스트로", PET_CLEAN, 1, None, NO, "need_action"),
+    ("질문: 라벨도 붙어 있으면 질문이 먼저", PET_LABEL, 1, None, {}, "question"),
 ]
 
 failed = 0
-for name, obs, attempt, prev_item, expected in cases:
-    got = judge(obs, attempt, prev_item=prev_item)
+for name, obs, attempt, prev_item, answers, expected in cases:
+    got = judge(obs, attempt, answers, prev_item=prev_item)
     ok = got["status"] == expected and got.get("message")
     failed += not ok
     print("O" if ok else "X", name, "→", got["status"])

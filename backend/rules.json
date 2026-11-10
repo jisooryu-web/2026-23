@@ -14,7 +14,9 @@
         {"key": "liquid_inside", "method": "photo", "ok": "false",
          "action": "내용물을 비우고 헹궈 주세요"},
         {"key": "label_attached", "method": "photo", "ok": "false",
-         "action": "라벨을 떼어 주세요"}
+         "action": "라벨을 떼어 주세요"},
+        {"key": "rinsed", "method": "question", "ok": "true",
+         "question": "내부를 물로 헹구셨나요?", "action": "내부를 물로 헹궈 주세요"}
       ],
       "warnings": []
     },

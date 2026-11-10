@@ -29,7 +29,8 @@ def status_of(res):
 # (이름, 요청 함수, 기대 HTTP 코드, 기대 status 또는 오류 code)
 cases = [
     ("서버 확인", lambda: client.get("/health"), 200, None),
-    ("정상 판정", lambda: client.post("/judge", files={"image": jpg()}, data={"attempt": "1"}), 200, "need_action"),
+    ("첫 판정: 헹굼 질문", lambda: client.post("/judge", files={"image": jpg()}, data={"attempt": "1"}), 200, "question"),
+    ("답 보내고 다시 판정", lambda: client.post("/judge", files={"image": jpg()}, data={"attempt": "1", "answers": '{"rinsed": "true"}'}), 200, "need_action"),
     ("사진 없음", lambda: client.post("/judge", data={"attempt": "1"}), 400, "NO_IMAGE"),
     ("attempt가 숫자 아님", lambda: client.post("/judge", files={"image": jpg()}, data={"attempt": "abc"}), 400, "BAD_REQUEST"),
     ("answers가 JSON 아님", lambda: client.post("/judge", files={"image": jpg()}, data={"answers": "{oops"}), 400, "BAD_REQUEST"),
