@@ -10,10 +10,12 @@ status 종류 (프론트 화면 분기 기준, API.md 참고)
   unsupported    지원하지 않는 품목
 """
 import json, os
+from schemas import RuleSet
 
 MAX_ATTEMPTS = 3
 with open(os.path.join(os.path.dirname(__file__), "rules.json"), encoding="utf-8") as f:
-    RULES = json.load(f)
+    RULESET = RuleSet.model_validate(json.load(f))   # 구조가 틀리면 여기서 바로 오류 (서버가 안 켜짐)
+RULES = RULESET.items                                # {"pet_bottle": Rule, ...}
 
 # 질문 선택지 기본값. 조건마다 rules.json의 "options"로 바꿀 수 있음
 # 예: "내용물을 비우셨나요?" → [{"label": "예", "value": "false"}, {"label": "아니요", "value": "true"}]
@@ -54,30 +56,30 @@ def judge(result, attempt=1, answers=None, prev_item=None):
         return _done(out, "different_item")
 
     rule, obs = RULES[item], result.get("observations", {})
-    out.update({"name": rule["name"], "type": rule["type"], "disposal": rule["disposal"],
-                "warnings": rule["warnings"], "source": rule["source"]})
+    out.update({"name": rule.name, "type": rule.type, "disposal": rule.disposal,
+                "warnings": list(rule.warnings), "source": rule.source})
 
-    if rule["type"] == "info":
+    if rule.type == "info":
         return _done(out, "pass")
 
-    for c in rule["checks"]:
-        value = answers.get(c["key"]) if c["method"] == "question" else obs.get(c["key"], "unknown")
+    for c in rule.checks:
+        value = answers.get(c.key) if c.method == "question" else obs.get(c.key, "unknown")
         if value is None:                       # 아직 안 물어본 질문
-            out["questions"].append({"key": c["key"], "text": c["question"],
-                                     "options": c.get("options", DEFAULT_OPTIONS)})
+            options = [o.model_dump() for o in c.options] if c.options else DEFAULT_OPTIONS
+            out["questions"].append({"key": c.key, "text": c.question, "options": options})
         elif value == "unknown":                # 사진으로 판단 못 함
-            out["retake"].append(c["key"])
-        elif value != c["ok"]:
-            if "redirect_disposal" in c:        # 처리로 해결 안 되는 조건 → 배출처 변경
-                out["disposal"] = c["redirect_disposal"]
+            out["retake"].append(c.key)
+        elif value != c.ok:
+            if c.redirect_disposal:             # 처리로 해결 안 되는 조건 → 배출처 변경
+                out["disposal"] = c.redirect_disposal
             else:
-                out["checklist"].append({"key": c["key"], "text": c["action"]})
+                out["checklist"].append({"key": c.key, "text": c.action})
 
     if out["questions"]:
         return _done(out, "question")
     if out["checklist"] or out["retake"]:
         if attempt >= MAX_ATTEMPTS:             # 재촬영 한도 → 대체 안내로 종료
-            out["disposal"] = rule["fallback_disposal"]
+            out["disposal"] = rule.fallback_disposal
             return _done(out, "fallback")
         return _done(out, "need_action" if out["checklist"] else "retake")
     return _done(out, "pass")

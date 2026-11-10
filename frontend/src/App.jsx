@@ -80,6 +80,11 @@ function App() {
   // countsAsAttempt: 처리 후 재촬영이면 true, 다른 물건을 찍어서 다시 찍는 거면 false
   function handleRetake(countsAsAttempt) {
     if (countsAsAttempt) setAttempt((prev) => prev + 1);
+    // 질문에 '아니요'해서 체크리스트가 된 항목은, 처리했다고 했으니 다음 촬영에서 다시 물어본다
+    const handledKeys = (result?.judgement?.checklist ?? []).map((item) => item.key);
+    setAnswers((prev) =>
+      Object.fromEntries(Object.entries(prev).filter(([key]) => !handledKeys.includes(key)))
+    );
     setFile(null);
     setResult(null);
     setError("");
