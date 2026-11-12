@@ -1,6 +1,6 @@
 """AI 호출 없이 API(app.py)만 검사. 실행: python tests/test_api.py
 AI 대신 정해진 관찰 결과를 돌려주는 가짜 함수를 끼워 넣는다."""
-import io, os, sys
+import io, json, os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
 
 from fastapi.testclient import TestClient
@@ -81,6 +81,6 @@ ok = res.status_code == 502 and status_of(res) == "AI_FAILED"
 failed += not ok
 print("O" if ok else "X", "AI 실패 →", res.status_code, status_of(res))
 
-total = len(cases) + 2
+total = len(cases) + 4
 print(f"\n{total - failed}/{total} 통과")
 sys.exit(1 if failed else 0)

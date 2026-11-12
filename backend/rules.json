@@ -50,7 +50,7 @@
     },
     "broken_glass": {
       "name": "깨진 유리",
-      "ai_hint": "shattered or cracked glass pieces, or a glass item that is visibly broken.",
+      "ai_hint": "a printed store/card receipt (thin paper slip with itemized text).",
       "type": "info",
       "disposal": "종량제봉투 (소량) / 특수규격마대 (다량)",
       "source": "헷갈리는 재활용품, 정확히 버리는 법",

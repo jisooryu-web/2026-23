@@ -6,6 +6,7 @@ from openai import OpenAI
 from PIL import Image, ImageOps
 
 from config import MAX_PIXELS, MAX_SIDE, MODEL
+from judge import RULES
 
 try:  # iPhone HEIC support (optional)
     from pillow_heif import register_heif_opener
@@ -23,7 +24,7 @@ def _get_client():
     return _client
 
 
-SYSTEM_PROMPT = """You are a visual inspector for a recycling assistant.
+PROMPT_TEMPLATE = """You are a visual inspector for a recycling assistant.
 Your ONLY job is to report what is visibly present in the photo.
 You must NOT decide how the item should be disposed of, and you must NOT apply any recycling rules.
 A separate rule engine makes all decisions based on your observations.
@@ -36,12 +37,8 @@ A separate rule engine makes all decisions based on your observations.
 4. Output a single JSON object only. No markdown, no explanations outside the JSON.
 
 # Item categories (choose exactly one)
-- "pet_bottle": a plastic beverage bottle (water, soda, juice, tea). Includes clear and colored PET bottles.
-  Does NOT include shampoo/detergent containers, cups, or food trays.
-- "cup_noodle": an instant noodle cup container (styrofoam, paper, or plastic), with or without lid.
-- "broken_glass": shattered or cracked glass pieces, or a glass item that is visibly broken.
-- "receipt": a printed store/card receipt (thin paper slip with itemized text).
-- "unsupported": anything else, multiple different items, no clear main item, or you cannot tell.
+{ITEM_LINES}
+- "unsupported": anything else, ...
 If several objects appear, judge only the single largest, most central object. If there is no clear main object, use "unsupported".
 
 # Observation fields and how to judge them
@@ -85,7 +82,7 @@ Use below 0.6 when the object is partially visible, unusual, or could be another
 
 # Output format (exactly these keys)
 {
-  "item": "pet_bottle" | "cup_noodle" | "broken_glass" | "receipt" | "unsupported",
+  "item": {ITEM_KEYS},
   "confidence": number,
   "same_item": "true" | "false" | "unknown",
   "observations": {
@@ -109,6 +106,11 @@ Photo: a styrofoam ramen cup seen from above, a little broth at the bottom, oran
 Photo: a ramen cup photographed from the side with the lid half closed.
 {"item":"cup_noodle","confidence":0.85,"same_item":"unknown","observations":{"is_transparent":"unknown","label_attached":"unknown","liquid_inside":"unknown","food_residue":"unknown","red_oil_stain":"unknown","material":"paper"},"notes":"Interior not visible because of the lid and side angle."}
 """
+# The item list comes from rules.json, so adding an item there is enough for the AI to know it.
+# .replace() instead of .format(): the prompt has many JSON braces that .format() would misread.
+ITEM_LINES = "\n".join(f'- "{key}": {rule.ai_hint}' for key, rule in RULES.items())
+ITEM_KEYS = " | ".join(f'"{key}"' for key in [*RULES, "unsupported"])
+SYSTEM_PROMPT = PROMPT_TEMPLATE.replace("{ITEM_LINES}", ITEM_LINES).replace("{ITEM_KEYS}", ITEM_KEYS)
 
 
 def prepare_image(data: bytes) -> bytes:
