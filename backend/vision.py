@@ -38,7 +38,7 @@ A separate rule engine makes all decisions based on your observations.
 
 # Item categories (choose exactly one)
 {ITEM_LINES}
-- "unsupported": anything else, ...
+- "unsupported": anything else, multiple different items, no clear main item, or you cannot tell.
 If several objects appear, judge only the single largest, most central object. If there is no clear main object, use "unsupported".
 
 # Observation fields and how to judge them
