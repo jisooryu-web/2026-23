@@ -54,6 +54,18 @@ function JudgeResult({ result, loading, onRetake, onAnswer, onRestart }) {
           </div>
         ))}
 
+      {/* 팁: 권고 조건 (안 해도 배출 가능) */}
+      {j.tips?.length > 0 && (
+        <div className="tips">
+          <strong>💡 이렇게 하면 더 좋아요</strong>
+          <ul>
+            {j.tips.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* 주의사항 (깨진 유리 등) */}
       {j.warnings?.length > 0 && (
         <div className="warnings">
