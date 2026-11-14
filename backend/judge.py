@@ -82,7 +82,9 @@ def judge(result, attempt=1, answers=None, prev_item=None):
         if item == "UNKNOWN":
             return _unsupported(out, answers, MESSAGES["not_confirmed"])
         subject = str(result.get("subject") or "").strip()
-        message = MESSAGES["unsupported"] + (f" (AI가 본 물건: {subject})" if subject else "")
+        # 두 번째 줄에 "(확인된 품목: 안경)" — 문구는 rules.json의 unsupported_subject
+        message = MESSAGES["unsupported"] + ("\n" + MESSAGES["unsupported_subject"].replace("{subject}", subject)
+                                             if subject else "")
         return _unsupported(out, answers, message)
 
     # 재촬영인데 다른 물건이면 판정하지 않음 (깨끗한 다른 병으로 통과하는 꼼수 방지)
