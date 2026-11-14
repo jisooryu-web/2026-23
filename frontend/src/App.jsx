@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import JudgeResult from "./components/JudgeResult";
-import { judgeImage, isMock } from "./services/judgeApi";
+import { judgeImage, isMock, wakeServer } from "./services/judgeApi";
 import "./App.css";
 
 const MOCK_STATUSES = ["pass", "need_action", "retake", "question", "fallback", "different_item", "unsupported"];
@@ -16,6 +16,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [mockStatus, setMockStatus] = useState("pass");
+
+  useEffect(() => {
+    wakeServer();
+  }, []);
 
   useEffect(() => {
     if (!file) {

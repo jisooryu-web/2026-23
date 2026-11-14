@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   plugins: [react()],
   server: {
-    // 개발 중 "/api/..." 요청을 Flask(5001)로 전달 → CORS 신경 안 써도 됨
+    // 개발 중 "/api/..." 요청을 FastAPI 백엔드(5001)로 전달 → CORS 신경 안 써도 됨
     proxy: {
       '/api': {
         target: 'http://127.0.0.1:5001',
