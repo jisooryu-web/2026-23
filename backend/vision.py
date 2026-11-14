@@ -5,7 +5,7 @@ import base64, io, json
 from openai import OpenAI
 from PIL import Image, ImageOps
 
-from config import AI_TIMEOUT, MAX_PIXELS, MAX_SIDE, MODEL, PREV_IMAGE_DETAIL
+from config import AI_TIMEOUT, MAX_PIXELS, MAX_SIDE, MIN_SIDE, MODEL, PREV_IMAGE_DETAIL
 from judge import RULES
 from schemas import FIELD_VALUES, UNSUPPORTED
 
@@ -139,6 +139,8 @@ def prepare_image(data: bytes) -> bytes:
         img = Image.open(io.BytesIO(data))       # reads only the header here, pixels are not decoded yet
         if img.width * img.height > MAX_PIXELS:   # e.g. a 20000x20000 PNG would take ~1.2GB of memory
             raise ValueError("image too large in pixels")
+        if min(img.size) < MIN_SIDE:               # e.g. a 10x10 thumbnail: nothing to see
+            raise ValueError("image too small")
         img = ImageOps.exif_transpose(img)        # respect phone rotation
         img = img.convert("RGB")
         img.thumbnail((MAX_SIDE, MAX_SIDE))

@@ -131,9 +131,13 @@ def judge_api(
         # 사진은 앱에서 파일로 저장하지 않고 메모리에서만 처리한다 (개인정보)
         try:
             cur = prepare_image(read_upload(image))
-            prev = prepare_image(read_upload(prev_image)) if prev_image else None
         except ValueError:
             raise ApiError("BAD_IMAGE", "사진을 읽을 수 없어요. JPG나 PNG로 다시 올려 주세요.", 400)
+        try:
+            prev = prepare_image(read_upload(prev_image)) if prev_image else None
+        except ValueError:                              # 처음 사진만 깨졌으면 비교 없이 지금 사진으로 판정
+            log.warning("prev_image unreadable, judging without comparison")
+            prev = None
 
         try:
             obs = Observation.model_validate(observe(cur, prev)).model_dump()

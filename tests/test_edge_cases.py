@@ -118,7 +118,7 @@ cases = [
      lambda: judge({"item": "P03", "observations": {"contamination_level": "5"}}, 1)["disposal"], "종량제봉투", False),
     ("흐름", "처음 사진과 같은 물건인데 AI가 same_item=false라고 하면 different_item이 반복될 수 있음 → 사용자 확인 필요",
      lambda: judge({**pet(), "same_item": "false"}, 2, {**YES, "confirm_same_item": "true"}, prev_item="P01")["status"],
-     "pass", True),
+     "pass", False),
 
     # ---------- D. 품목 확신도 ----------
     ("확신도", "confidence 0.59 → 품목 확인 질문",
@@ -139,9 +139,9 @@ cases = [
      "TOO_LARGE", False),
     ("업로드", "처음 사진(prev_image)만 깨짐 → 지금 사진으로는 판정 계속",
      lambda: api_code(call_api(pet(), files={"image": jpg(), "prev_image": ("x.jpg", b"broken", "image/jpeg")},
-                               data={"attempt": "2", "prev_item": "P01", "answers": json.dumps(YES)})), "pass", True),
+                               data={"attempt": "2", "prev_item": "P01", "answers": json.dumps(YES)})), "pass", False),
     ("업로드", "아주 작은 사진(10x10) → AI까지 보내지 말고 다시 찍기 안내",
-     lambda: api_code(call_api(pet(), files={"image": jpg((10, 10))}, data={"answers": json.dumps(YES)})), "BAD_IMAGE", True),
+     lambda: api_code(call_api(pet(), files={"image": jpg((10, 10))}, data={"answers": json.dumps(YES)})), "BAD_IMAGE", False),
 
     # ---------- F. 규칙표(rules.json) 실수 ----------
     ("규칙표", "AI 출력 키 오타(lable) → 서버 시작 전에 잡힘",

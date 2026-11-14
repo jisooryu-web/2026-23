@@ -29,6 +29,7 @@ LABELS = RULESET.field_labels                        # "label" → "라벨"
 
 YES_NO = [{"label": "예", "value": "true"}, {"label": "아니요", "value": "false"}]
 CHECKBOX_KEY = "checkbox"                            # answers에서 체크박스 답의 키
+SAME_KEY = "confirm_same_item"                       # "같은 물건이 맞나요?" 답의 키
 
 
 def _norm(v):
@@ -65,8 +66,14 @@ def judge(result, attempt=1, answers=None, prev_item=None):
         return _done(out, "unsupported", MESSAGES["not_confirmed"] if item == "UNKNOWN" else None)
 
     # 재촬영인데 다른 물건이면 판정하지 않음 (깨끗한 다른 병으로 통과하는 꼼수 방지)
-    if prev_item and (not _related(item, prev_item.strip().upper()) or result.get("same_item") == "false"):
-        return _done(out, "different_item")
+    if prev_item:
+        if not _related(item, prev_item.strip().upper()):
+            return _done(out, "different_item")
+        if result.get("same_item") == "false" and answers.get(SAME_KEY) != "true":
+            # 품목은 같은데 AI만 '다른 물건'이라고 봄 → 사용자에게 한 번 확인 (AI 오판으로 무한 반복 방지)
+            if answers.get(SAME_KEY) != "false":
+                out["questions"].append({"key": SAME_KEY, "text": MESSAGES["same_item_question"], "options": YES_NO})
+            return _done(out, "different_item")
 
     # AI가 품목을 확신하지 못하면, 기준을 적용하기 전에 사용자에게 품목부터 확인
     confirm_key = f"confirm_{item}"

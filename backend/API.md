@@ -65,10 +65,10 @@
 | --- | --- | --- |
 | `pass` | 통과 (정보 안내형 품목 포함) | `message` + `disposal` 크게 + `tips` + `warnings` |
 | `need_action` | 처리할 일 남음 | `checklist` 체크박스 → 다 체크하면 "다시 찍기" (attempt +1). `checklist`에 `key: "checkbox"`가 있었으면 다음 요청 `answers`에 `{"checkbox": "true"}`를 넣어 다시 묻지 않게 |
-| `retake` | AI가 일부를 못 봄 | `message` + "다시 찍기" (attempt +1) |
+| `retake` | AI가 일부를 못 봄 | `message`(안 보인 부분 포함, 예: "라벨") + "다시 찍기" (attempt +1) |
 | `question` | 사진으로 알 수 없음 | `questions[].text` + `options` 버튼 → 같은 사진으로 `answers` 붙여 재요청 (attempt 그대로). 질문은 3종류: 품목 확인(`confirm_P01`), 체크박스(`checkbox`, 예: "헹궜어요"), 정보 안내형 질문(`ice_content`, `tumbler_single`) |
-| `fallback` | 재촬영 한도 도달, 또는 오염도 5단계 | `message`(품목별 대체 안내)와 `disposal` 안내하고 종료 |
-| `different_item` | 처음과 다른 물건 | "같은 물건 다시 찍기" (attempt 그대로) |
+| `fallback` | 재촬영 한도 도달, 또는 오염도 5단계 | `message`(품목별 대체 안내)와 `disposal` 안내하고 종료. `checklist`가 있으면 "직접 확인할 항목"으로 표시 |
+| `different_item` | 처음과 다른 물건 | "같은 물건 다시 찍기" (attempt 그대로). 품목은 같은데 AI만 다르다고 본 경우 `questions`에 "같은 물건이 맞나요?"(`confirm_same_item`)가 옴 → '예'면 같은 사진으로 재요청 |
 | `unsupported` | 지원하지 않는 품목 | `message` + 처음으로 |
 
 ### 오류 응답
@@ -81,8 +81,9 @@
 | --- | --- | --- |
 | 400 | `NO_IMAGE` | `image` 없음 |
 | 400 | `BAD_REQUEST` | `attempt`가 숫자가 아니거나 `answers`가 JSON이 아님 |
-| 400 | `BAD_IMAGE` | 이미지로 읽을 수 없는 파일 |
+| 400 | `BAD_IMAGE` | 이미지로 읽을 수 없는 파일, 너무 작은 사진 |
 | 413 | `TOO_LARGE` | 15MB 초과 |
+| 429 | `RATE_LIMITED` | 같은 IP에서 1분에 너무 많이 요청 (기본 20회, `RATE_LIMIT_PER_MIN`) |
 | 502 | `AI_FAILED` | AI 호출 실패 (키 없음, 네트워크 등) |
 
 프론트는 `error.message`를 그대로 보여주면 된다.

@@ -54,7 +54,7 @@ function JudgeResult({ result, loading, onRetake, onAnswer, onRestart }) {
       )}
 
       {/* 질문: 선택지를 누르면 같은 사진으로 다시 판정 */}
-      {j.status === "question" &&
+      {j.questions?.length > 0 &&
         j.questions.map((q) => (
           <div key={q.key} className="question">
             <p>{q.text}</p>
