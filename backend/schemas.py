@@ -36,6 +36,7 @@ class Option(BaseModel):
     model_config = ConfigDict(extra="forbid")
     label: str                      # 버튼에 보일 글자
     value: str                      # 눌렀을 때 보낼 값
+    keywords: List[str] = []        # 검색용 다른 이름 (품목 직접 선택에서 사용)
 
 
 class Place(BaseModel):
@@ -123,6 +124,7 @@ class Rule(BaseModel):
     type: Literal["state", "info"]
     ai_key: str = Field(pattern=r"^[a-z][a-z0-9_]*$")   # AI가 답할 영어 이름 (예: pet_bottle). P10·I10처럼 비슷한 ID를 헷갈리지 않게
     ai_hint: str                                # AI 프롬프트에 들어갈 품목 설명 (영어)
+    keywords: List[str] = []                    # 사용자가 검색할 때 쓸 다른 이름 (예: 생수병, 우유팩)
     disposal: str                               # 통과 시 배출처 (한 줄 요약)
     how: List[str] = []                         # 버리는 순서 (통과 화면에 번호로)
     places: List[str] = []                      # 어디에 버리는지 (places의 키)
@@ -166,7 +168,7 @@ class Level(BaseModel):
 
 
 STATUSES = ("pass", "need_action", "retake", "question", "fallback", "different_item", "unsupported")
-REQUIRED_MESSAGES = set(STATUSES) | {"not_confirmed", "confirm_question", "same_item_question", "pick_item_question",
+REQUIRED_MESSAGES = set(STATUSES) | {"not_confirmed", "confirm_question", "same_item_question", "pick_item_question", "unsupported_subject",
                                      "checkbox_question", "checkbox_yes", "checkbox_no"}
 
 
@@ -176,6 +178,7 @@ class RuleSet(BaseModel):
     messages: Dict[str, str]                    # 화면 문구. 기획팀이 파이썬 없이 고칠 수 있게
     field_labels: Dict[str, str]                # AI 출력 키의 한국어 이름 (재촬영 이유 안내용)
     places: Dict[str, Place]                    # 배출 장소 안내 (아파트 / 단독주택)
+    popular_items: List[str] = []               # 품목 직접 선택에서 검색 전에 먼저 보여 줄 품목
     contamination: Dict[str, Level]             # 오염도 5단계
     items: Dict[str, Rule]
 
@@ -192,6 +195,9 @@ class RuleSet(BaseModel):
             raise ValueError("contamination에는 1~5단계가 모두 있어야 해요")
         if self.contamination["2"].result == "checkbox" and not self.contamination["2"].checkbox:
             raise ValueError("contamination 2단계에는 checkbox 문구가 필요해요")
+        bad_popular = set(self.popular_items) - set(self.items)
+        if bad_popular:
+            raise ValueError(f"popular_items에 없는 품목ID: {sorted(bad_popular)}")
         ai_keys = [r.ai_key for r in self.items.values()]
         dup = {k for k in ai_keys if ai_keys.count(k) > 1} | ({"other", "unknown"} & set(ai_keys))
         if dup:
@@ -246,7 +252,7 @@ class Observation(BaseModel):
     @field_validator("subject", mode="before")
     @classmethod
     def _subject(cls, v):
-        return str(v or "").strip()[:30]
+        return str(v or "").strip()[:40]
 
     @field_validator("item", mode="before")
     @classmethod

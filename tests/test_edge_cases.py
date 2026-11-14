@@ -83,8 +83,8 @@ cases = [
      lambda: judge(pet(is_clear="TRUE"), 1, YES)["disposal"], "투명 페트병 전용 수거함", False),
     ("AI값", "AI가 영어 이름(plastic_film_bag)으로 답함 → 품목ID P10으로 변환해 판정",
      lambda: judge({"item": "plastic_film_bag", "observations": {"liquid": "absent", "contamination_level": "1", "plastic_part": "absent"}}, 1)["item"], "P10", False),
-    ("인식", "지원 안 함일 때 AI가 본 물건 이름을 안내에 함께 보여 줌",
-     lambda: "안경" in judge({"item": "other", "subject": "안경"}, 1)["message"], True, False),
+    ("인식", "지원 안 함일 때 다음 줄에 '(확인된 품목: 안경)'",
+     lambda: judge({"item": "other", "subject": "안경"}, 1)["message"].split("\n")[-1], "(확인된 품목: 안경)", False),
     ("동기화", "AI 프롬프트에 subject(물건 이름) 출력 규칙이 있음",
      lambda: '"subject"' in vision.SYSTEM_PROMPT, True, False),
     ("AI값", "AI가 'other'로 답함 → 지원 안 함",
@@ -149,6 +149,11 @@ cases = [
     # ---------- D. 품목 확신도 ----------
     ("인식", "지원 안 함(X00) → 품목을 직접 고르는 질문 (기준표 품목 전부)",
      lambda: len(judge({"item": "X00"}, 1)["questions"][0]["options"]), len(RULES_RAW["items"]), False),
+    ("인식", "품목 선택 목록은 자주 찾는 품목이 먼저, 검색용 다른 이름(keywords)이 함께 옴",
+     lambda: (lambda o: (o[0]["value"], "우유팩" in next(x for x in o if x["value"] == "P11")["keywords"]))(
+         judge({"item": "X00"}, 1)["questions"][0]["options"]), ("P01", True), False),
+    ("규칙표", "popular_items에 없는 품목ID → 잡힘",
+     lambda: rules_error(lambda d: d.__setitem__("popular_items", ["P99"])), True, False),
     ("인식", "이미 품목을 골랐는데도 인식 실패 → 같은 질문 반복 안 함",
      lambda: judge({"item": "X00"}, 1, {"item_hint": "P01"})["questions"], [], False),
     ("인식", "품목을 직접 고르면 AI에게 알려 주고 그 품목으로 판정",

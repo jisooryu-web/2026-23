@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ItemPicker from "./ItemPicker";
 
 // 상태별 화면. 백엔드 judgement.status 와 1:1 대응
 function JudgeResult({ result, loading, onRetake, onAnswer, onRestart }) {
@@ -17,7 +18,7 @@ function JudgeResult({ result, loading, onRetake, onAnswer, onRestart }) {
   return (
     <div className={`result-card status-${j.status}`}>
       {j.name && <p className="item-name">{j.name}</p>}
-      <h2>{j.message}</h2>
+      <h2 className="message">{j.message}</h2>
 
       {/* 통과 / 대체 안내: 배출 방법을 크게 */}
       {(j.status === "pass" || j.status === "fallback") && (
@@ -84,7 +85,10 @@ function JudgeResult({ result, loading, onRetake, onAnswer, onRestart }) {
 
       {/* 질문: 선택지를 누르면 같은 사진으로 다시 판정 */}
       {j.questions?.length > 0 &&
-        j.questions.map((q) => (
+        j.questions.map((q) =>
+          q.key === "item_hint" ? (
+            <ItemPicker key={q.key} question={q} disabled={loading} onPick={onAnswer} />
+          ) : (
           <div key={q.key} className="question">
             <p>{q.text}</p>
             {q.options.map((opt) => (
@@ -93,7 +97,8 @@ function JudgeResult({ result, loading, onRetake, onAnswer, onRestart }) {
               </button>
             ))}
           </div>
-        ))}
+          )
+        )}
 
       {/* 팁: 권고 조건 (안 해도 배출 가능) */}
       {j.tips?.length > 0 && (
