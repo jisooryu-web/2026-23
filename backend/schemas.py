@@ -121,6 +121,7 @@ class Rule(BaseModel):
     model_config = ConfigDict(extra="forbid")
     name: str
     type: Literal["state", "info"]
+    ai_key: str = Field(pattern=r"^[a-z][a-z0-9_]*$")   # AI가 답할 영어 이름 (예: pet_bottle). P10·I10처럼 비슷한 ID를 헷갈리지 않게
     ai_hint: str                                # AI 프롬프트에 들어갈 품목 설명 (영어)
     disposal: str                               # 통과 시 배출처 (한 줄 요약)
     how: List[str] = []                         # 버리는 순서 (통과 화면에 번호로)
@@ -191,6 +192,10 @@ class RuleSet(BaseModel):
             raise ValueError("contamination에는 1~5단계가 모두 있어야 해요")
         if self.contamination["2"].result == "checkbox" and not self.contamination["2"].checkbox:
             raise ValueError("contamination 2단계에는 checkbox 문구가 필요해요")
+        ai_keys = [r.ai_key for r in self.items.values()]
+        dup = {k for k in ai_keys if ai_keys.count(k) > 1} | ({"other", "unknown"} & set(ai_keys))
+        if dup:
+            raise ValueError(f"ai_key가 겹치거나 예약어(other, unknown)예요: {sorted(dup)}")
         if UNSUPPORTED in self.items:
             raise ValueError(f"'{UNSUPPORTED}'는 '지원 안 함'을 뜻하는 예약 ID예요")
         for item_id, rule in self.items.items():
@@ -235,7 +240,13 @@ class Observation(BaseModel):
     confidence: Optional[float] = Field(default=None, ge=0, le=1)   # 범위 밖이면 AI 오류
     same_item: str = "unknown"
     observations: Dict[str, str] = {}
+    subject: str = ""                           # AI가 본 물건의 한국어 이름 (예: "안경"). 지원 안 함일 때 안내·로그용
     notes: str = ""
+
+    @field_validator("subject", mode="before")
+    @classmethod
+    def _subject(cls, v):
+        return str(v or "").strip()[:30]
 
     @field_validator("item", mode="before")
     @classmethod

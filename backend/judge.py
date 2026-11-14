@@ -40,6 +40,16 @@ def _norm(v):
     return str(v).strip().lower()
 
 
+# AI는 품목ID(P10, I10…) 대신 영어 이름(plastic_film_bag…)으로 답한다. 비슷한 ID를 헷갈리는 실수를 막기 위해
+AI_KEYS = {r.ai_key.upper(): k for k, r in RULES.items()} | {"OTHER": UNSUPPORTED}
+
+
+def normalize_item(item):
+    """AI 답(영어 이름) 또는 품목ID → 품목ID. 모르는 값은 그대로 (→ unsupported)"""
+    item = str(item or UNSUPPORTED).strip().upper()
+    return AI_KEYS.get(item, item)
+
+
 def _related(a, b):
     """같은 물건으로 볼 수 있는 품목인지 (분기로 이어진 품목: P01↔P02, P07↔I06)"""
     if a == b:
@@ -64,12 +74,16 @@ def judge(result, attempt=1, answers=None, prev_item=None):
     answers: 질문 답 {"checkbox": "true", "confirm_P01": "true", "ice_content": "gel", ...}
     prev_item: 재촬영이면 처음 판정된 품목 (같은 물건인지 확인용)"""
     answers = {k: _norm(v) for k, v in (answers or {}).items()}
-    item = str(result.get("item") or UNSUPPORTED).strip().upper()
+    item = normalize_item(result.get("item"))
     out = {"item": item, "attempt": attempt, "max_attempts": MAX_ATTEMPTS,
            "checklist": [], "questions": [], "retake": [], "tips": [], "warnings": [], "how": [], "places": []}
 
     if item not in RULES:
-        return _unsupported(out, answers, MESSAGES["not_confirmed"] if item == "UNKNOWN" else None)
+        if item == "UNKNOWN":
+            return _unsupported(out, answers, MESSAGES["not_confirmed"])
+        subject = str(result.get("subject") or "").strip()
+        message = MESSAGES["unsupported"] + (f" (AI가 본 물건: {subject})" if subject else "")
+        return _unsupported(out, answers, message)
 
     # 재촬영인데 다른 물건이면 판정하지 않음 (깨끗한 다른 병으로 통과하는 꼼수 방지)
     if prev_item:
