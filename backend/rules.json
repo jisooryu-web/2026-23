@@ -16,17 +16,138 @@
     "checkbox_no": "아직 안 했어요"
   },
   "field_labels": {
-    "is_clear": "병 색(투명한지)", "label": "라벨", "liquid": "남은 내용물", "crushed": "찌그러짐", "cap": "뚜껑",
-    "contamination_level": "용기 안쪽", "stain": "얼룩", "other_material": "다른 재질", "plastic_part": "플라스틱 마개",
-    "broken": "깨진 곳", "foreign_object": "병 안 이물질", "pump_attached": "펌프", "is_white": "스티로폼 색",
-    "tape_label": "테이프·송장", "umbrella_type": "우산 종류"
+    "is_clear": "병 색(투명한지)",
+    "label": "라벨",
+    "liquid": "남은 내용물",
+    "crushed": "찌그러짐",
+    "cap": "뚜껑",
+    "contamination_level": "용기 안쪽",
+    "stain": "얼룩",
+    "other_material": "다른 재질",
+    "plastic_part": "플라스틱 마개",
+    "broken": "깨진 곳",
+    "foreign_object": "병 안 이물질",
+    "pump_attached": "펌프",
+    "is_white": "스티로폼 색",
+    "tape_label": "테이프·송장",
+    "umbrella_type": "우산 종류"
+  },
+  "places": {
+    "pet": {
+      "title": "투명 페트병 전용 수거함",
+      "where": [
+        "아파트: 분리수거장의 '투명 페트병' 전용 수거함(마대)에 넣어요.",
+        "단독주택·빌라: 투명 페트병만 투명 비닐봉투에 따로 담아 재활용품 배출일에 집 앞에 내놓아요."
+      ]
+    },
+    "plastic": {
+      "title": "플라스틱류",
+      "where": [
+        "아파트: 분리수거장의 플라스틱 수거함에 넣어요.",
+        "단독주택·빌라: 다른 재활용품과 함께 투명·반투명 봉투에 담아 재활용품 배출일에 집 앞에 내놓아요."
+      ]
+    },
+    "paper": {
+      "title": "종이류",
+      "where": [
+        "아파트: 분리수거장의 종이류 수거함에 넣어요.",
+        "단독주택·빌라: 재활용품 배출일에 종이류끼리 모아 내놓아요."
+      ]
+    },
+    "can": {
+      "title": "캔류",
+      "where": [
+        "아파트: 분리수거장의 캔(고철) 수거함에 넣어요.",
+        "단독주택·빌라: 투명·반투명 봉투에 담아 재활용품 배출일에 집 앞에 내놓아요."
+      ]
+    },
+    "glass": {
+      "title": "유리병류",
+      "where": [
+        "아파트: 분리수거장의 유리병 수거함에 넣어요.",
+        "단독주택·빌라: 투명·반투명 봉투에 담아 재활용품 배출일에 집 앞에 내놓아요."
+      ]
+    },
+    "styro": {
+      "title": "스티로폼",
+      "where": [
+        "아파트: 분리수거장의 스티로폼 수거 자리에 내놓아요.",
+        "단독주택·빌라: 투명 봉투에 담거나 끈으로 묶어 재활용품 배출일에 집 앞에 내놓아요."
+      ]
+    },
+    "vinyl": {
+      "title": "비닐류",
+      "where": [
+        "아파트: 분리수거장의 비닐류 수거함에 넣어요.",
+        "단독주택·빌라: 투명 봉투에 비닐류끼리 모아 재활용품 배출일에 내놓아요."
+      ]
+    },
+    "general": {
+      "title": "종량제봉투 (일반쓰레기)",
+      "where": [
+        "사는 구의 종량제봉투(편의점·마트에서 구입)에 넣어요.",
+        "아파트는 단지 내 일반쓰레기 배출 장소에, 단독주택·빌라는 배출일 저녁에 집 앞에 내놓아요."
+      ]
+    },
+    "battery": {
+      "title": "폐건전지 수거함",
+      "where": [
+        "주민센터나 아파트 단지 등에 있는 폐건전지 수거함에 넣어요."
+      ]
+    },
+    "lamp": {
+      "title": "폐형광등 수거함",
+      "where": [
+        "주민센터나 아파트 단지 등에 있는 폐형광등 수거함에 깨지지 않게 넣어요."
+      ]
+    },
+    "bulky": {
+      "title": "대형폐기물 신고",
+      "where": [
+        "구청 홈페이지나 앱에서 대형폐기물로 신고하고 수수료를 내요.",
+        "받은 신고번호(스티커)를 붙여 정해진 날, 정해진 장소에 내놓아요."
+      ]
+    },
+    "sack": {
+      "title": "특수규격마대 (불연성 쓰레기)",
+      "where": [
+        "깨지는 쓰레기 전용 마대에 담아 내놓아요. 판매처(주민센터 등)는 구마다 달라요."
+      ]
+    },
+    "gu": {
+      "title": "거주지 구청 기준 확인",
+      "where": [
+        "구청 홈페이지에서 '분리배출'을 검색하거나 '내 손안의 분리배출' 앱에서 확인해요."
+      ]
+    }
   },
   "contamination": {
-    "1": {"name": "깨끗함", "result": "pass", "text": "깨끗해요! 바로 배출할 수 있어요."},
-    "2": {"name": "약한 오염", "result": "checkbox", "text": "물로 가볍게 헹궈 주세요.", "checkbox": "헹궜어요"},
-    "3": {"name": "보통 오염", "result": "fail", "text": "남은 음식물을 비우고 세제로 씻은 뒤 다시 찍어 주세요."},
-    "4": {"name": "심한 오염", "result": "fail", "text": "남은 음식물은 음식물 쓰레기로 먼저 버리고(뼈·껍데기 등은 일반쓰레기), 기름은 휴지로 닦은 뒤 세제로 씻어 주세요."},
-    "5": {"name": "매우 심한 오염", "result": "discard", "text": "세척으로 되살리기 어려운 상태예요. 종량제봉투로 버려 주세요."}
+    "1": {
+      "name": "깨끗함",
+      "result": "pass",
+      "text": "깨끗해요! 바로 배출할 수 있어요."
+    },
+    "2": {
+      "name": "약한 오염",
+      "result": "checkbox",
+      "text": "물로 가볍게 헹궈 주세요.",
+      "checkbox": "헹궜어요"
+    },
+    "3": {
+      "name": "보통 오염",
+      "result": "fail",
+      "text": "남은 음식물을 비우고 세제로 씻은 뒤 다시 찍어 주세요."
+    },
+    "4": {
+      "name": "심한 오염",
+      "result": "fail",
+      "text": "남은 음식물은 음식물 쓰레기로 먼저 버리고(뼈·껍데기 등은 일반쓰레기), 기름은 휴지로 닦은 뒤 세제로 씻어 주세요."
+    },
+    "5": {
+      "name": "매우 심한 오염",
+      "result": "discard",
+      "text": "세척으로 되살리기 어려운 상태예요. 종량제봉투로 버려 주세요."
+    }
   },
   "items": {
     "P01": {
@@ -34,17 +155,73 @@
       "type": "state",
       "ai_hint": "a PET beverage bottle (water, soda, juice, tea), clear or tinted. Report the tint with is_clear.",
       "disposal": "투명 페트병 전용 수거함",
+      "how": [
+        "내용물을 비우고 물로 헹궈요.",
+        "라벨을 떼요. 뗀 라벨은 비닐류로 버려요.",
+        "병을 찌그러뜨린 뒤 뚜껑을 닫아요."
+      ],
+      "places": [
+        "pet"
+      ],
       "checkbox": "내용물을 비우고 물로 헹궜어요",
       "checkbox_action": "내용물을 비우고 물로 헹궈 주세요.",
       "fallback_disposal": "투명 페트병 전용 수거함",
       "fallback_message": "남은 항목을 체크리스트로 직접 확인한 뒤 배출해 주세요.",
-      "warnings": ["뚜껑은 분리하지 말고 닫아서 함께 버려요."],
+      "fallback_places": [
+        "pet"
+      ],
+      "warnings": [
+        "뚜껑은 분리하지 말고 닫아서 함께 버려요."
+      ],
       "conditions": [
-        {"id": "C01", "key": "is_clear", "kind": "branch", "pass": ["true"], "unknown": "retake", "to": "P02"},
-        {"id": "C02", "key": "label", "kind": "required", "pass": ["absent"], "unknown": "retake", "action": "라벨을 떼어 주세요. 뗀 라벨은 비닐류로 버려요."},
-        {"id": "C03", "key": "liquid", "kind": "required", "pass": ["absent"], "unknown": "fail", "action": "남은 음료를 비워 주세요."},
-        {"id": "C04", "key": "crushed", "kind": "tip", "pass": ["true"], "action": "찌그러뜨리면 더 좋아요."},
-        {"id": "C05", "key": "cap", "kind": "tip", "pass": ["closed"], "action": "뚜껑은 닫아서 함께 버려요."}
+        {
+          "id": "C01",
+          "key": "is_clear",
+          "kind": "branch",
+          "pass": [
+            "true"
+          ],
+          "unknown": "retake",
+          "to": "P02"
+        },
+        {
+          "id": "C02",
+          "key": "label",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "retake",
+          "action": "라벨을 떼어 주세요. 뗀 라벨은 비닐류로 버려요."
+        },
+        {
+          "id": "C03",
+          "key": "liquid",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "fail",
+          "action": "남은 음료를 비워 주세요."
+        },
+        {
+          "id": "C04",
+          "key": "crushed",
+          "kind": "tip",
+          "pass": [
+            "true"
+          ],
+          "action": "찌그러뜨리면 더 좋아요."
+        },
+        {
+          "id": "C05",
+          "key": "cap",
+          "kind": "tip",
+          "pass": [
+            "closed"
+          ],
+          "action": "뚜껑은 닫아서 함께 버려요."
+        }
       ],
       "source": "S03, S04, S06"
     },
@@ -53,13 +230,34 @@
       "type": "state",
       "ai_hint": "a tinted PET bottle or another rigid plastic container that is not a delivery food container (P03), cup noodle (P04) or pump bottle (P08).",
       "disposal": "플라스틱류 (뚜껑과 함께 통합배출)",
+      "how": [
+        "내용물을 비우고 물로 헹궈요.",
+        "뚜껑은 닫은 채로 함께 버려요."
+      ],
+      "places": [
+        "plastic"
+      ],
       "checkbox": "내용물을 비우고 물로 헹궜어요",
       "checkbox_action": "내용물을 비우고 물로 헹궈 주세요.",
       "fallback_disposal": "플라스틱류",
       "fallback_message": "남은 항목을 직접 확인한 뒤 플라스틱류로 배출해 주세요.",
-      "warnings": ["투명 페트병 전용 수거함에 넣지 마세요."],
+      "fallback_places": [
+        "plastic"
+      ],
+      "warnings": [
+        "투명 페트병 전용 수거함에 넣지 마세요."
+      ],
       "conditions": [
-        {"id": "C07", "key": "liquid", "kind": "required", "pass": ["absent"], "unknown": "fail", "action": "남은 내용물을 비워 주세요."}
+        {
+          "id": "C07",
+          "key": "liquid",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "fail",
+          "action": "남은 내용물을 비워 주세요."
+        }
       ],
       "source": "S05, S06"
     },
@@ -68,13 +266,47 @@
       "type": "state",
       "ai_hint": "a plastic food delivery or takeout container or its lid (often black or clear).",
       "disposal": "플라스틱류",
+      "how": [
+        "남은 음식물은 음식물 쓰레기로 버려요.",
+        "기름기는 휴지로 닦고 물이나 세제로 씻어요.",
+        "종이 라벨 등 다른 재질은 떼요."
+      ],
+      "places": [
+        "plastic"
+      ],
       "fallback_disposal": "종량제봉투",
       "fallback_message": "세척으로 제거되지 않는 오염은 종량제봉투로 버려 주세요.",
+      "fallback_places": [
+        "general"
+      ],
       "warnings": [],
       "conditions": [
-        {"id": "C09", "key": "contamination_level", "kind": "contamination", "unknown": "retake"},
-        {"id": "C10", "key": "stain", "kind": "required", "pass": ["absent"], "unknown": "fail", "action": "기름은 휴지로 먼저 닦고 세제로 씻어 주세요."},
-        {"id": "C11", "key": "other_material", "kind": "required", "pass": ["absent"], "unknown": "retake", "action": "다른 재질(종이 라벨, 알루미늄 등)은 떼어 주세요."}
+        {
+          "id": "C09",
+          "key": "contamination_level",
+          "kind": "contamination",
+          "unknown": "retake"
+        },
+        {
+          "id": "C10",
+          "key": "stain",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "fail",
+          "action": "기름은 휴지로 먼저 닦고 세제로 씻어 주세요."
+        },
+        {
+          "id": "C11",
+          "key": "other_material",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "retake",
+          "action": "다른 재질(종이 라벨, 알루미늄 등)은 떼어 주세요."
+        }
       ],
       "source": "S10, S12"
     },
@@ -83,12 +315,38 @@
       "type": "state",
       "ai_hint": "an instant cup noodle container (styrofoam, paper, or plastic), with or without lid.",
       "disposal": "재질 표시에 따라 플라스틱(스티로폼)류 또는 종이류",
+      "how": [
+        "남은 국물과 건더기를 비워요.",
+        "물로 헹궈요.",
+        "용기의 재질 표시를 보고 스티로폼(PS)이면 플라스틱류, 종이면 종이류로 버려요."
+      ],
+      "places": [
+        "plastic",
+        "paper"
+      ],
       "fallback_disposal": "종량제봉투",
       "fallback_message": "헹궈도 붉은 착색이 남으면 종량제봉투로 버려 주세요.",
+      "fallback_places": [
+        "general"
+      ],
       "warnings": [],
       "conditions": [
-        {"id": "C12", "key": "contamination_level", "kind": "contamination", "unknown": "retake"},
-        {"id": "C13", "key": "stain", "kind": "required", "pass": ["absent"], "unknown": "fail", "action": "물로 헹궈 주세요. 헹궈도 지워지지 않으면 종량제봉투로 버려요."}
+        {
+          "id": "C12",
+          "key": "contamination_level",
+          "kind": "contamination",
+          "unknown": "retake"
+        },
+        {
+          "id": "C13",
+          "key": "stain",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "fail",
+          "action": "물로 헹궈 주세요. 헹궈도 지워지지 않으면 종량제봉투로 버려요."
+        }
       ],
       "source": "S09, S10"
     },
@@ -97,14 +355,42 @@
       "type": "state",
       "ai_hint": "a metal beverage or food can (aluminum or steel).",
       "disposal": "캔류",
+      "how": [
+        "내용물을 다 비우고 헹궈요.",
+        "플라스틱 마개가 있으면 떼요.",
+        "찌그러뜨려 부피를 줄여요."
+      ],
+      "places": [
+        "can"
+      ],
       "checkbox": "내용물을 다 비웠어요",
       "checkbox_action": "내용물을 다 비워 주세요.",
       "fallback_disposal": "캔류",
       "fallback_message": "남은 항목을 직접 확인한 뒤 캔류로 배출해 주세요.",
+      "fallback_places": [
+        "can"
+      ],
       "warnings": [],
       "conditions": [
-        {"id": "C14", "key": "plastic_part", "kind": "required", "pass": ["absent"], "unknown": "retake", "action": "플라스틱 마개를 떼어 주세요."},
-        {"id": "C15", "key": "crushed", "kind": "tip", "pass": ["true"], "action": "찌그러뜨려 부피를 줄이면 좋아요."}
+        {
+          "id": "C14",
+          "key": "plastic_part",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "retake",
+          "action": "플라스틱 마개를 떼어 주세요."
+        },
+        {
+          "id": "C15",
+          "key": "crushed",
+          "kind": "tip",
+          "pass": [
+            "true"
+          ],
+          "action": "찌그러뜨려 부피를 줄이면 좋아요."
+        }
       ],
       "source": "S06, S07"
     },
@@ -113,13 +399,36 @@
       "type": "state",
       "ai_hint": "a butane gas canister or an aerosol spray can.",
       "disposal": "캔류",
+      "how": [
+        "불꽃 없는 야외에서 노즐을 눌러 가스를 끝까지 빼요.",
+        "플라스틱 뚜껑을 떼요.",
+        "구멍은 뚫지 말고 캔류로 버려요."
+      ],
+      "places": [
+        "can"
+      ],
       "checkbox": "야외에서 노즐을 눌러 가스를 모두 뺐어요",
       "checkbox_action": "불꽃 없는 야외에서 노즐을 눌러 가스를 모두 빼 주세요.",
       "fallback_disposal": "거주지 구청 기준 확인",
       "fallback_message": "가스를 뺄 수 없으면 거주지 구청 기준을 확인해 주세요.",
-      "warnings": ["구멍을 뚫지 마세요(폭발·중독 위험). 불꽃 없는 야외에서 가스를 빼요.", "락카·페인트 등 인화성 내용물이 남은 캔은 유해폐기물 수거함으로 버려요."],
+      "fallback_places": [
+        "gu"
+      ],
+      "warnings": [
+        "구멍을 뚫지 마세요(폭발·중독 위험). 불꽃 없는 야외에서 가스를 빼요.",
+        "락카·페인트 등 인화성 내용물이 남은 캔은 유해폐기물 수거함으로 버려요."
+      ],
       "conditions": [
-        {"id": "C17", "key": "plastic_part", "kind": "required", "pass": ["absent"], "unknown": "retake", "action": "플라스틱 뚜껑을 떼어 주세요."}
+        {
+          "id": "C17",
+          "key": "plastic_part",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "retake",
+          "action": "플라스틱 뚜껑을 떼어 주세요."
+        }
       ],
       "source": "S14"
     },
@@ -128,15 +437,55 @@
       "type": "state",
       "ai_hint": "a glass bottle (soju, beer, beverage, sauce).",
       "disposal": "유리병류",
+      "how": [
+        "뚜껑을 분리해요.",
+        "내용물을 비우고 물로 헹궈요.",
+        "담배꽁초 같은 이물질은 넣지 않아요."
+      ],
+      "places": [
+        "glass"
+      ],
       "checkbox": "물로 헹궜어요",
       "checkbox_action": "물로 헹궈 주세요.",
       "fallback_disposal": "유리병류",
       "fallback_message": "남은 항목을 직접 확인한 뒤 유리병류로 배출해 주세요.",
-      "warnings": ["담배꽁초 등 이물질을 넣지 마세요."],
+      "fallback_places": [
+        "glass"
+      ],
+      "warnings": [
+        "담배꽁초 등 이물질을 넣지 마세요."
+      ],
       "conditions": [
-        {"id": "C19", "key": "broken", "kind": "branch", "pass": ["false"], "unknown": "branch", "to": "I06"},
-        {"id": "C20", "key": "cap", "kind": "required", "pass": ["absent"], "unknown": "retake", "action": "뚜껑을 분리해 주세요."},
-        {"id": "C21", "key": "foreign_object", "kind": "required", "pass": ["absent"], "unknown": "retake", "action": "담배꽁초 등 이물질을 빼 주세요."}
+        {
+          "id": "C19",
+          "key": "broken",
+          "kind": "branch",
+          "pass": [
+            "false"
+          ],
+          "unknown": "branch",
+          "to": "I06"
+        },
+        {
+          "id": "C20",
+          "key": "cap",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "retake",
+          "action": "뚜껑을 분리해 주세요."
+        },
+        {
+          "id": "C21",
+          "key": "foreign_object",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "retake",
+          "action": "담배꽁초 등 이물질을 빼 주세요."
+        }
       ],
       "source": "S01, S08"
     },
@@ -145,14 +494,46 @@
       "type": "state",
       "ai_hint": "a pump-type plastic container such as shampoo, body wash, or liquid detergent.",
       "disposal": "본체: 플라스틱류 / 펌프: 종량제봉투",
+      "how": [
+        "펌프를 빼서 종량제봉투에 버려요.",
+        "본체는 내용물을 비우고 헹궈 플라스틱류로 버려요.",
+        "라벨은 가능하면 떼요."
+      ],
+      "places": [
+        "plastic",
+        "general"
+      ],
       "checkbox": "내용물을 비우고 헹궜어요",
       "checkbox_action": "내용물을 비우고 헹궈 주세요.",
       "fallback_disposal": "본체: 플라스틱류 / 펌프: 종량제봉투",
       "fallback_message": "펌프가 빠지지 않으면 거주지 구청 기준을 확인해 주세요.",
-      "warnings": ["스프링이 든 펌프는 플라스틱으로 버리지 마세요."],
+      "fallback_places": [
+        "plastic",
+        "general"
+      ],
+      "warnings": [
+        "스프링이 든 펌프는 플라스틱으로 버리지 마세요."
+      ],
       "conditions": [
-        {"id": "C23", "key": "pump_attached", "kind": "required", "pass": ["false"], "unknown": "retake", "action": "펌프를 빼 주세요. 펌프는 종량제봉투로 버려요."},
-        {"id": "C24", "key": "label", "kind": "tip", "pass": ["absent"], "action": "라벨은 가능하면 떼어 주세요."}
+        {
+          "id": "C23",
+          "key": "pump_attached",
+          "kind": "required",
+          "pass": [
+            "false"
+          ],
+          "unknown": "retake",
+          "action": "펌프를 빼 주세요. 펌프는 종량제봉투로 버려요."
+        },
+        {
+          "id": "C24",
+          "key": "label",
+          "kind": "tip",
+          "pass": [
+            "absent"
+          ],
+          "action": "라벨은 가능하면 떼어 주세요."
+        }
       ],
       "source": "S13"
     },
@@ -161,119 +542,352 @@
       "type": "state",
       "ai_hint": "a styrofoam (expanded polystyrene) box, e.g. a fruit or fish delivery box.",
       "disposal": "스티로폼",
+      "how": [
+        "테이프·송장·라벨을 모두 떼요.",
+        "이물질은 닦아 내요.",
+        "흰색 스티로폼만 스티로폼으로 버려요."
+      ],
+      "places": [
+        "styro"
+      ],
       "fallback_disposal": "종량제봉투",
       "fallback_message": "이물질이 제거되지 않으면 종량제봉투로 버려 주세요.",
+      "fallback_places": [
+        "general"
+      ],
       "warnings": [],
       "conditions": [
-        {"id": "C26", "key": "is_white", "kind": "branch", "pass": ["true"], "unknown": "retake",
-         "to_disposal": "종량제봉투", "to_message": "흰색이 아닌 스티로폼은 재활용되지 않아요. 종량제봉투로 버려 주세요."},
-        {"id": "C27", "key": "tape_label", "kind": "required", "pass": ["absent"], "unknown": "retake", "action": "테이프·송장·라벨을 떼어 주세요."},
-        {"id": "C28", "key": "contamination_level", "kind": "contamination", "unknown": "retake"}
+        {
+          "id": "C26",
+          "key": "is_white",
+          "kind": "branch",
+          "pass": [
+            "true"
+          ],
+          "unknown": "retake",
+          "to_disposal": "종량제봉투",
+          "to_message": "흰색이 아닌 스티로폼은 재활용되지 않아요. 종량제봉투로 버려 주세요.",
+          "to_places": [
+            "general"
+          ]
+        },
+        {
+          "id": "C27",
+          "key": "tape_label",
+          "kind": "required",
+          "pass": [
+            "absent"
+          ],
+          "unknown": "retake",
+          "action": "테이프·송장·라벨을 떼어 주세요."
+        },
+        {
+          "id": "C28",
+          "key": "contamination_level",
+          "kind": "contamination",
+          "unknown": "retake"
+        }
       ],
       "source": "S01, S06, S09, S12"
     },
     "I01": {
-      "name": "영수증", "type": "info",
+      "name": "영수증",
+      "type": "info",
       "ai_hint": "a printed store or card receipt (thin paper slip with itemized text).",
       "disposal": "종량제봉투",
+      "places": [
+        "general"
+      ],
       "message": "영수증은 감열지라 종이로 재활용되지 않아요. 종량제봉투로 버려 주세요.",
-      "warnings": [], "source": "S11, S12"
+      "warnings": [],
+      "source": "S11, S12"
     },
     "I02": {
-      "name": "건전지", "type": "info",
+      "name": "건전지",
+      "type": "info",
       "ai_hint": "a household battery (AA, AAA, 9V, coin cell).",
       "disposal": "전지류 전용 수거함",
+      "places": [
+        "battery"
+      ],
       "message": "건전지는 전용 수거함에 버려 주세요. 주민센터 등 공공시설에 있어요.",
-      "warnings": ["일반쓰레기에 버리지 마세요."], "source": "S01, S11"
+      "warnings": [
+        "일반쓰레기에 버리지 마세요."
+      ],
+      "source": "S01, S11"
     },
     "I03": {
-      "name": "형광등", "type": "info",
+      "name": "형광등",
+      "type": "info",
       "ai_hint": "a fluorescent lamp tube or bulb, or an LED tube.",
       "disposal": "형광등 전용 수거함",
+      "places": [
+        "lamp"
+      ],
       "message": "형광등 전용 수거함에 버려 주세요.",
       "warnings": [],
-      "split": {"key": "broken", "method": "photo", "cases": [
-        {"when": ["false"], "disposal": "형광등 전용 수거함", "message": "형광등 전용 수거함에 버려 주세요."},
-        {"when": ["true", "unknown"], "disposal": "소량: 종량제봉투 / 대량: 특수규격마대", "message": "깨진 형광등은 신문지로 감싸 소량이면 종량제봉투에 버려 주세요."}
-      ]},
+      "split": {
+        "key": "broken",
+        "method": "photo",
+        "cases": [
+          {
+            "when": [
+              "false"
+            ],
+            "disposal": "형광등 전용 수거함",
+            "message": "형광등 전용 수거함에 버려 주세요.",
+            "places": [
+              "lamp"
+            ]
+          },
+          {
+            "when": [
+              "true",
+              "unknown"
+            ],
+            "disposal": "소량: 종량제봉투 / 대량: 특수규격마대",
+            "message": "깨진 형광등은 신문지로 감싸 소량이면 종량제봉투에 버려 주세요.",
+            "places": [
+              "general",
+              "sack"
+            ]
+          }
+        ]
+      },
       "source": "S01, S02"
     },
     "I04": {
-      "name": "우산", "type": "info",
+      "name": "우산",
+      "type": "info",
       "ai_hint": "an umbrella (long or folding).",
       "disposal": "대형폐기물 신고",
+      "places": [
+        "bulky"
+      ],
       "message": "장우산은 구청에 대형폐기물로 신고한 뒤 배출해요.",
-      "warnings": ["자치구마다 기준이 달라요. 버리기 전 수리도 고려해 보세요."],
-      "split": {"key": "umbrella_type", "method": "photo", "cases": [
-        {"when": ["long"], "disposal": "대형폐기물 신고", "message": "장우산은 구청에 대형폐기물로 신고한 뒤 배출해요."},
-        {"when": ["folding"], "disposal": "거주지 구청 기준 확인", "message": "접이식 우산은 거주지 구청 기준을 확인해 주세요."},
-        {"when": ["unknown"], "disposal": "장우산: 대형폐기물 신고 / 접이식: 구청 기준 확인", "message": "장우산은 대형폐기물로 신고하고, 접이식 우산은 거주지 구청 기준을 확인해 주세요."}
-      ]},
+      "warnings": [
+        "자치구마다 기준이 달라요. 버리기 전 수리도 고려해 보세요."
+      ],
+      "split": {
+        "key": "umbrella_type",
+        "method": "photo",
+        "cases": [
+          {
+            "when": [
+              "long"
+            ],
+            "disposal": "대형폐기물 신고",
+            "message": "장우산은 구청에 대형폐기물로 신고한 뒤 배출해요.",
+            "places": [
+              "bulky"
+            ]
+          },
+          {
+            "when": [
+              "folding"
+            ],
+            "disposal": "거주지 구청 기준 확인",
+            "message": "접이식 우산은 거주지 구청 기준을 확인해 주세요.",
+            "places": [
+              "gu"
+            ]
+          },
+          {
+            "when": [
+              "unknown"
+            ],
+            "disposal": "장우산: 대형폐기물 신고 / 접이식: 구청 기준 확인",
+            "message": "장우산은 대형폐기물로 신고하고, 접이식 우산은 거주지 구청 기준을 확인해 주세요.",
+            "places": [
+              "bulky",
+              "gu"
+            ]
+          }
+        ]
+      },
       "source": "S02, S18"
     },
     "I05": {
-      "name": "아이스팩", "type": "info",
+      "name": "아이스팩",
+      "type": "info",
       "ai_hint": "an ice pack (plastic pouch filled with gel or water).",
       "disposal": "종량제봉투 (통째로)",
+      "places": [
+        "general"
+      ],
       "message": "젤은 하수구에 버리면 안 돼요. 통째로 종량제봉투에 버리거나 재사용해 주세요.",
-      "warnings": ["젤(고흡수성 수지)을 하수구·변기에 버리지 마세요. 재사용하거나 수거함이 있으면 이용해요."],
-      "split": {"key": "ice_content", "method": "question", "question": "안에 든 게 물인가요, 젤인가요?",
-        "options": [{"label": "물", "value": "water"}, {"label": "젤", "value": "gel"}, {"label": "모르겠어요", "value": "unknown"}],
+      "warnings": [
+        "젤(고흡수성 수지)을 하수구·변기에 버리지 마세요. 재사용하거나 수거함이 있으면 이용해요."
+      ],
+      "split": {
+        "key": "ice_content",
+        "method": "question",
+        "question": "안에 든 게 물인가요, 젤인가요?",
+        "options": [
+          {
+            "label": "물",
+            "value": "water"
+          },
+          {
+            "label": "젤",
+            "value": "gel"
+          },
+          {
+            "label": "모르겠어요",
+            "value": "unknown"
+          }
+        ],
         "cases": [
-          {"when": ["water"], "disposal": "물은 버리고 비닐은 비닐류", "message": "물은 버리고 비닐만 비닐류로 버려 주세요."},
-          {"when": ["gel", "unknown"], "disposal": "종량제봉투 (통째로)", "message": "젤은 하수구에 버리면 안 돼요. 통째로 종량제봉투에 버리거나 재사용해 주세요."}
-        ]},
+          {
+            "when": [
+              "water"
+            ],
+            "disposal": "물은 버리고 비닐은 비닐류",
+            "message": "물은 버리고 비닐만 비닐류로 버려 주세요.",
+            "places": [
+              "vinyl"
+            ]
+          },
+          {
+            "when": [
+              "gel",
+              "unknown"
+            ],
+            "disposal": "종량제봉투 (통째로)",
+            "message": "젤은 하수구에 버리면 안 돼요. 통째로 종량제봉투에 버리거나 재사용해 주세요.",
+            "places": [
+              "general"
+            ]
+          }
+        ]
+      },
       "source": "S09, S15"
     },
     "I06": {
-      "name": "깨진 유리", "type": "info",
+      "name": "깨진 유리",
+      "type": "info",
       "ai_hint": "broken glass pieces or a visibly broken glass item (not a broken fluorescent lamp).",
       "disposal": "소량: 종량제봉투 / 다량: 특수규격마대",
+      "how": [
+        "신문지 등으로 단단히 감싸요.",
+        "겉에 '깨진 유리'라고 적어요.",
+        "소량이면 종량제봉투에, 많으면 특수규격마대에 넣어요."
+      ],
+      "places": [
+        "general",
+        "sack"
+      ],
       "message": "신문지로 단단히 감싸고 '깨진 유리'라고 적어 종량제봉투에 버려 주세요.",
-      "warnings": ["신문지 등으로 감싸고 '깨진 유리'라고 표시해 주세요(수거 작업자 안전).", "맨손으로 만지지 마세요."],
+      "warnings": [
+        "신문지 등으로 감싸고 '깨진 유리'라고 표시해 주세요(수거 작업자 안전).",
+        "맨손으로 만지지 마세요."
+      ],
       "source": "S01, S11, S16"
     },
     "I07": {
-      "name": "내열·크리스탈 유리, 도자기, 거울", "type": "info",
+      "name": "내열·크리스탈 유리, 도자기, 거울",
+      "type": "info",
       "ai_hint": "heat-resistant glass cookware, crystal glass, a ceramic or porcelain dish, or a mirror.",
       "disposal": "특수규격마대 또는 대형폐기물",
+      "places": [
+        "sack",
+        "bulky"
+      ],
       "message": "유리병류가 아니에요. 특수규격마대에 버려 주세요.",
-      "warnings": ["유리병류에 넣으면 안 돼요."], "source": "S01, S09"
+      "warnings": [
+        "유리병류에 넣으면 안 돼요."
+      ],
+      "source": "S01, S09"
     },
     "I08": {
-      "name": "칫솔·옷걸이·CD", "type": "info",
+      "name": "칫솔·옷걸이·CD",
+      "type": "info",
       "ai_hint": "a toothbrush, a clothes hanger, or a CD/DVD disc.",
       "disposal": "종량제봉투",
+      "places": [
+        "general"
+      ],
       "message": "여러 재질이 섞여 있어 종량제봉투로 버려 주세요.",
-      "warnings": [], "source": "S01, S11"
+      "warnings": [],
+      "source": "S01, S11"
     },
     "I09": {
-      "name": "텀블러", "type": "info",
+      "name": "텀블러",
+      "type": "info",
       "ai_hint": "a tumbler (reusable insulated bottle or cup).",
       "disposal": "종량제봉투",
+      "places": [
+        "general"
+      ],
       "message": "여러 재질이 섞인 텀블러는 종량제봉투로 버려 주세요.",
       "warnings": [],
-      "split": {"key": "tumbler_single", "method": "question", "question": "뚜껑·패킹을 뺀 본체가 스테인리스 한 가지 재질인가요?",
-        "options": [{"label": "예", "value": "true"}, {"label": "아니요", "value": "false"}, {"label": "모르겠어요", "value": "unknown"}],
+      "split": {
+        "key": "tumbler_single",
+        "method": "question",
+        "question": "뚜껑·패킹을 뺀 본체가 스테인리스 한 가지 재질인가요?",
+        "options": [
+          {
+            "label": "예",
+            "value": "true"
+          },
+          {
+            "label": "아니요",
+            "value": "false"
+          },
+          {
+            "label": "모르겠어요",
+            "value": "unknown"
+          }
+        ],
         "cases": [
-          {"when": ["true"], "disposal": "캔류(고철) — 뚜껑·패킹은 분리", "message": "본체는 씻어서 캔류로, 뚜껑·패킹은 재질에 맞게 버려 주세요."},
-          {"when": ["false", "unknown"], "disposal": "종량제봉투", "message": "여러 재질이 섞인 텀블러는 종량제봉투로 버려 주세요."}
-        ]},
+          {
+            "when": [
+              "true"
+            ],
+            "disposal": "캔류(고철) — 뚜껑·패킹은 분리",
+            "message": "본체는 씻어서 캔류로, 뚜껑·패킹은 재질에 맞게 버려 주세요.",
+            "places": [
+              "can"
+            ]
+          },
+          {
+            "when": [
+              "false",
+              "unknown"
+            ],
+            "disposal": "종량제봉투",
+            "message": "여러 재질이 섞인 텀블러는 종량제봉투로 버려 주세요.",
+            "places": [
+              "general"
+            ]
+          }
+        ]
+      },
       "source": "S17"
     },
     "I10": {
-      "name": "플라스틱 빨대", "type": "info",
+      "name": "플라스틱 빨대",
+      "type": "info",
       "ai_hint": "a plastic drinking straw.",
       "disposal": "종량제봉투",
+      "places": [
+        "general"
+      ],
       "message": "빨대는 작아서 재활용 선별이 안 돼요. 종량제봉투로 버려 주세요.",
-      "warnings": [], "source": "S11"
+      "warnings": [],
+      "source": "S11"
     },
     "I11": {
-      "name": "종이컵", "type": "info",
+      "name": "종이컵",
+      "type": "info",
       "ai_hint": "a disposable paper cup.",
       "disposal": "종량제봉투 (종이컵 전용 수거함이 있으면 그곳)",
+      "places": [
+        "general"
+      ],
       "message": "코팅된 종이컵은 종량제봉투로 버려 주세요. 종이컵 전용 수거함이 있으면 그곳에!",
-      "warnings": [], "source": "S02, S10"
+      "warnings": [],
+      "source": "S02, S10"
     }
   }
 }

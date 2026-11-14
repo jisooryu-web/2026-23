@@ -27,6 +27,35 @@ function JudgeResult({ result, loading, onRetake, onAnswer, onRestart }) {
         </div>
       )}
 
+      {/* 버리는 순서 (통과했을 때만) */}
+      {j.status === "pass" && j.how?.length > 0 && (
+        <div className="how">
+          <strong>이렇게 버려요</strong>
+          <ol>
+            {j.how.map((step) => (
+              <li key={step}>{step}</li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {/* 어디에 버리는지: 아파트 / 단독주택 */}
+      {(j.status === "pass" || j.status === "fallback") && j.places?.length > 0 && (
+        <div className="places">
+          {j.places.map((p) => (
+            <div key={p.title} className="place">
+              <strong>📍 {p.title}</strong>
+              <ul>
+                {p.where.map((w) => (
+                  <li key={w}>{w}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          <p className="place-note">배출 요일과 장소는 사는 구마다 달라요. 구청 홈페이지에서 확인해 주세요.</p>
+        </div>
+      )}
+
       {/* 처리할 일: 체크해야 다시 찍기 가능 */}
       {j.status === "need_action" && (
         <ul className="checklist">

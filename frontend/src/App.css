@@ -108,6 +108,30 @@ button:disabled {
   background: rgba(220, 38, 38, 0.1);
 }
 
+.how,
+.places {
+  margin: 16px 0;
+  text-align: left;
+}
+
+.how ol,
+.place ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+
+.place {
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.place-note {
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
 .self-check {
   margin: 16px 0;
   padding: 12px 16px;

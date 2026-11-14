@@ -26,6 +26,7 @@ RULES = RULESET.items                                # {"P01": Rule, ...}
 MESSAGES = RULESET.messages                          # 화면 문구도 rules.json에서
 LEVELS = RULESET.contamination                       # 오염도 5단계
 LABELS = RULESET.field_labels                        # "label" → "라벨"
+PLACES = RULESET.places                              # "plastic" → {title, where}
 
 YES_NO = [{"label": "예", "value": "true"}, {"label": "아니요", "value": "false"}]
 CHECKBOX_KEY = "checkbox"                            # answers에서 체크박스 답의 키
@@ -46,6 +47,10 @@ def _related(a, b):
     return b in to(a) or a in to(b)
 
 
+def _places(keys):
+    return [PLACES[k].model_dump() for k in keys]
+
+
 def _done(out, status, message=None):
     out["status"] = status
     out["message"] = message or MESSAGES[status]
@@ -60,7 +65,7 @@ def judge(result, attempt=1, answers=None, prev_item=None):
     answers = {k: _norm(v) for k, v in (answers or {}).items()}
     item = str(result.get("item") or UNSUPPORTED).strip().upper()
     out = {"item": item, "attempt": attempt, "max_attempts": MAX_ATTEMPTS,
-           "checklist": [], "questions": [], "retake": [], "tips": [], "warnings": []}
+           "checklist": [], "questions": [], "retake": [], "tips": [], "warnings": [], "how": [], "places": []}
 
     if item not in RULES:
         return _done(out, "unsupported", MESSAGES["not_confirmed"] if item == "UNKNOWN" else None)
@@ -94,7 +99,8 @@ def judge(result, attempt=1, answers=None, prev_item=None):
 def _evaluate(item, obs, attempt, answers, out):
     rule = RULES[item]
     out.update({"item": item, "name": rule.name, "type": rule.type, "disposal": rule.disposal,
-                "warnings": list(rule.warnings), "source": rule.source})
+                "warnings": list(rule.warnings), "source": rule.source,
+                "how": list(rule.how), "places": _places(rule.places)})
     if rule.type == "info":
         return _info(rule, obs, answers, out)
 
@@ -109,7 +115,7 @@ def _evaluate(item, obs, attempt, answers, out):
                 continue
             level = LEVELS[value]
             if level.result == "discard":              # 5단계: 세척으로 해결 안 됨 → 바로 대체 안내
-                out["disposal"] = rule.fallback_disposal
+                out["disposal"], out["places"], out["how"] = rule.fallback_disposal, _places(rule.fallback_places), []
                 return _done(out, "fallback", level.text)
             if level.result == "fail":
                 out["checklist"].append({"key": c.key, "text": level.text})
@@ -133,9 +139,11 @@ def _evaluate(item, obs, attempt, answers, out):
         if c.kind == "branch":
             if c.to:                                   # 다른 품목으로 전환해 처음부터 다시 판정
                 fresh = {k: out[k] for k in ("attempt", "max_attempts")}
-                fresh.update({"checklist": [], "questions": [], "retake": [], "tips": [], "warnings": []})
+                fresh.update({"checklist": [], "questions": [], "retake": [], "tips": [], "warnings": [],
+                              "how": [], "places": []})
                 return _evaluate(c.to, obs, attempt, answers, fresh)
             out["disposal"] = c.to_disposal            # 배출처만 바뀌고 끝
+            out["how"], out["places"] = [], _places(c.to_places)
             return _done(out, "pass", c.to_message)
         if c.kind == "tip":
             out["tips"].append(c.action)
@@ -150,7 +158,7 @@ def _evaluate(item, obs, attempt, answers, out):
                                  for k in out["retake"]]
             if checkbox and not checked:
                 out["checklist"].append({"key": CHECKBOX_KEY, "text": checkbox_action})
-            out["disposal"] = rule.fallback_disposal
+            out["disposal"], out["places"], out["how"] = rule.fallback_disposal, _places(rule.fallback_places), []
             return _done(out, "fallback", rule.fallback_message)
         if out["checklist"]:
             # 처리할 일이 있으면 체크박스도 체크리스트에 함께 (다시 찍을 때 체크하면 재질문 안 함)
@@ -165,7 +173,7 @@ def _evaluate(item, obs, attempt, answers, out):
         if answers.get(CHECKBOX_KEY) == "false":       # 아직 안 했다고 함 → 할 일로
             out["checklist"].append({"key": CHECKBOX_KEY, "text": checkbox_action})
             if attempt >= MAX_ATTEMPTS:
-                out["disposal"] = rule.fallback_disposal
+                out["disposal"], out["places"], out["how"] = rule.fallback_disposal, _places(rule.fallback_places), []
                 return _done(out, "fallback", rule.fallback_message)
             return _done(out, "need_action")
         out["questions"].append({"key": CHECKBOX_KEY, "text": checkbox,
@@ -190,4 +198,6 @@ def _info(rule, obs, answers, out):
             return _done(out, "question")
     case = next(c for c in split.cases if value in c.when)
     out["disposal"] = case.disposal
+    if case.places:
+        out["places"] = _places(case.places)
     return _done(out, "pass", case.message)
