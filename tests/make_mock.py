@@ -34,8 +34,8 @@ SCENARIOS = {
                   "notes": "Orange stain remains on the inner wall."}, MAX_ATTEMPTS, {}, "P04"),
     "different_item": ({"item": "I01", "confidence": 0.9, "same_item": "false", "observations": {},
                         "notes": "A receipt, not the bottle from the first photo."}, 2, {}, "P01"),
-    "unsupported": ({"item": "X00", "confidence": 0.8, "observations": {},
-                     "notes": "A metal spoon."}, 1, {}, None),
+    "unsupported": ({"item": "X00", "confidence": 0.8, "observations": {}, "subject": "손톱깎이 세트 케이스",
+                     "notes": "A black case with nail clippers and scissors; not a listed category."}, 1, {}, None),
 }
 
 mocks = {}
