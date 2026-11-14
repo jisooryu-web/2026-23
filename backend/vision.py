@@ -5,7 +5,7 @@ import base64, io, json
 from openai import OpenAI
 from PIL import Image, ImageOps
 
-from config import MAX_PIXELS, MAX_SIDE, MODEL
+from config import AI_TIMEOUT, MAX_PIXELS, MAX_SIDE, MODEL, PREV_IMAGE_DETAIL
 from judge import RULES
 from schemas import FIELD_VALUES, UNSUPPORTED
 
@@ -21,7 +21,7 @@ _client = None
 def _get_client():
     global _client
     if _client is None:
-        _client = OpenAI()  # reads OPENAI_API_KEY from .env
+        _client = OpenAI(timeout=AI_TIMEOUT, max_retries=1)  # reads OPENAI_API_KEY from .env
     return _client
 
 
@@ -149,9 +149,9 @@ def prepare_image(data: bytes) -> bytes:
     return out.getvalue()
 
 
-def _image_part(jpeg: bytes):
+def _image_part(jpeg: bytes, detail: str = "high"):
     b64 = base64.b64encode(jpeg).decode()
-    return {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}", "detail": "high"}}
+    return {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}", "detail": detail}}
 
 
 def observe(image: bytes, prev_image: bytes | None = None) -> dict:
@@ -160,7 +160,8 @@ def observe(image: bytes, prev_image: bytes | None = None) -> dict:
         "Two images follow: BEFORE, then CURRENT. Return the observation JSON for the CURRENT photo."
         if prev_image else "Inspect this photo and return the observation JSON.")}]
     if prev_image:
-        content.append(_image_part(prev_image))
+        # the BEFORE photo is only for "same item?" so low detail is enough (faster, cheaper)
+        content.append(_image_part(prev_image, PREV_IMAGE_DETAIL))
     content.append(_image_part(image))
 
     res = _get_client().chat.completions.create(
