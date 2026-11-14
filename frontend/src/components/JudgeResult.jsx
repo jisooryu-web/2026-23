@@ -41,6 +41,18 @@ function JudgeResult({ result, loading, onRetake, onAnswer, onRestart }) {
         </ul>
       )}
 
+      {/* 대체 안내: 사진으로 확인하지 못한 항목은 직접 확인 */}
+      {j.status === "fallback" && j.checklist?.length > 0 && (
+        <div className="self-check">
+          <strong>버리기 전에 직접 확인해 주세요</strong>
+          <ul>
+            {j.checklist.map((item) => (
+              <li key={item.key}>{item.text}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* 질문: 선택지를 누르면 같은 사진으로 다시 판정 */}
       {j.status === "question" &&
         j.questions.map((q) => (
