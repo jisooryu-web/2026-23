@@ -42,15 +42,17 @@ A separate rule engine makes all decisions based on your observations.
 The photo is taken by a user who wants to throw away ONE object. Other things often appear too
 (table, floor, shelves, other trash, packaging, hands). Pick the SUBJECT: the object the photographer is aiming at.
 - Usually it is near the center, the largest in the frame, in the sharpest focus, closest to the camera, or held in a hand.
-- Ignore everything else completely. Background objects must never change your answer and never make it "X00".
+- Ignore everything else completely. Background objects must never change your answer and never make it "other".
 - All observation fields describe the SUBJECT only.
 
-# Item categories (choose exactly one item ID for the SUBJECT)
+# Item categories (choose exactly one item name for the SUBJECT, spelled exactly as listed)
 {ITEM_LINES}
-- "X00": the SUBJECT is clearly none of the categories above (e.g. a spoon, a phone, clothing, food itself).
+- "other": the SUBJECT is clearly none of the categories above (e.g. a spoon, a phone, clothing, food itself).
 - "unknown": there is no recognizable subject at all (blank, extremely dark or blurred, only background).
-If the subject looks like one of the categories but you are not sure, choose that category with confidence below 0.6.
-Do NOT use "X00" just because you are uncertain.
+Choose a category only when the subject IS that kind of object (a real example of it).
+- If it is that kind of object but partly hidden, unusual or hard to see, still choose it, with confidence below 0.6.
+- If it is a different kind of object that is not listed, answer "other". Never force it into the closest-sounding category
+  (e.g. a pen, cable, remote control, plastic case or kitchen tool is NOT a toothbrush, hanger or CD; a mug is NOT a tumbler).
 
 # Observation fields
 Include ONLY the fields listed for the chosen item. Leave every other field out.
@@ -63,7 +65,7 @@ Include ONLY the fields listed for the chosen item. Leave every other field out.
   "absent" only if the full body is visible with no label remnant. If a side that could hide a label is not visible, "unknown".
 - liquid: "present" if any liquid or contents are visible inside (a layer at the bottom, foam, residue of the product);
   "absent" if the interior is visibly empty (small water droplets from rinsing count as "absent").
-- crushed: "true" if the container is visibly flattened or crushed.
+- crushed: "true" if the container or box is visibly flattened, crushed, or folded flat.
 - cap: "closed" if a cap is screwed on; "present" if a cap or lid is attached in any way; "absent" if there is no cap.
   For PET bottles use "closed" or "absent"; for glass bottles use "present" or "absent".
 - contamination_level: food or contents residue left on/in a food container (NOT oil coloring; that is "stain").
@@ -75,13 +77,15 @@ Include ONLY the fields listed for the chosen item. Leave every other field out.
   If the inside is not visible (lid on, photo from the side), "unknown".
 - stain: "present" if oil or red/orange color has soaked into the surface (typical of spicy soup) and remains as a tint;
   "absent" if the visible surface keeps its original color. Do NOT confuse printed designs or shadows with stains.
-- other_material: "present" if a part of a different material is attached (paper label, aluminum film, sticker).
-- plastic_part: "present" if a plastic cap, nozzle cover or ring is attached to a metal can.
+- other_material: "present" if a part of a different material is attached (paper label, aluminum film, sticker,
+  a paper sleeve on a plastic cup).
+- plastic_part: "present" if a plastic cap, nozzle cover, ring or straw is attached to a metal can, a paper carton,
+  or a plastic film package (e.g. the hard plastic lid of a wet-wipe pouch).
 - broken: "true" if the item is cracked, chipped or shattered.
-- foreign_object: "present" if something that does not belong is inside the bottle (cigarette butt, straw, paper).
+- foreign_object: "present" if something that does not belong is inside the bottle or cup (cigarette butt, straw, paper).
 - pump_attached: "true" if the pump head is still attached to the container.
 - is_white: "true" if the styrofoam is plain white; "false" if colored, printed all over, or coated.
-- tape_label: "present" if tape, a shipping label, or a sticker remains on the styrofoam box.
+- tape_label: "present" if tape, a shipping label, or a sticker remains on the box (styrofoam or cardboard).
 - umbrella_type: "long" for a straight long umbrella, "folding" for a compact folding umbrella.
 
 # Before/after comparison (only when two images are given)
@@ -110,13 +114,13 @@ Use below 0.6 when the object is partially visible, unusual, or could be another
 
 # Examples
 Photo: a clear water bottle, blue label around the middle, cap on, empty, not crushed.
-{"item":"P01","confidence":0.95,"same_item":"unknown","observations":{"is_clear":"true","label":"present","liquid":"absent","crushed":"false","cap":"closed"},"notes":"Blue label wraps a clear, empty bottle."}
+{"item":"pet_bottle","confidence":0.95,"same_item":"unknown","observations":{"is_clear":"true","label":"present","liquid":"absent","crushed":"false","cap":"closed"},"notes":"Blue label wraps a clear, empty bottle."}
 
 Photo: a styrofoam ramen cup seen from above, thin broth film at the bottom, orange tint on the inner wall.
-{"item":"P04","confidence":0.9,"same_item":"unknown","observations":{"contamination_level":"2","stain":"present"},"notes":"Thin broth film and orange tint on the inner wall."}
+{"item":"cup_noodle_container","confidence":0.9,"same_item":"unknown","observations":{"contamination_level":"2","stain":"present"},"notes":"Thin broth film and orange tint on the inner wall."}
 
 Photo: a ramen cup photographed from the side with the lid half closed.
-{"item":"P04","confidence":0.85,"same_item":"unknown","observations":{"contamination_level":"unknown","stain":"unknown"},"notes":"Interior not visible because of the lid and side angle."}
+{"item":"cup_noodle_container","confidence":0.85,"same_item":"unknown","observations":{"contamination_level":"unknown","stain":"unknown"},"notes":"Interior not visible because of the lid and side angle."}
 """
 # The item list and per-item fields come from rules.json, so editing rules.json is enough for the AI to know.
 # .replace() instead of .format(): the prompt has many JSON braces that .format() would misread.
@@ -133,11 +137,11 @@ def _values(key):
     return " | ".join(f'"{v}"' for v in sorted(FIELD_VALUES[key])) + ' | "unknown"'
 
 
-ITEM_LINES = "\n".join(f'- "{key}": {rule.ai_hint}' for key, rule in RULES.items())
-ITEM_KEYS = " | ".join(f'"{key}"' for key in [*RULES, UNSUPPORTED, "unknown"])
+ITEM_LINES = "\n".join(f'- "{rule.ai_key}": {rule.ai_hint}' for rule in RULES.values())
+ITEM_KEYS = " | ".join(f'"{rule.ai_key}"' for rule in RULES.values()) + ' | "other" | "unknown"'
 FIELD_LINES = "\n".join(
-    f'- {key}: ' + (", ".join(f"{f} ({_values(f)})" for f in _fields(rule)) or "no fields")
-    for key, rule in RULES.items())
+    f'- {rule.ai_key}: ' + (", ".join(f"{f} ({_values(f)})" for f in _fields(rule)) or "no fields")
+    for rule in RULES.values())
 SYSTEM_PROMPT = (PROMPT_TEMPLATE.replace("{ITEM_LINES}", ITEM_LINES)
                  .replace("{ITEM_KEYS}", ITEM_KEYS).replace("{FIELD_LINES}", FIELD_LINES))
 
@@ -171,8 +175,9 @@ def observe(image: bytes, prev_image: bytes | None = None, item_hint: str | None
     text = ("Two images follow: BEFORE, then CURRENT. Return the observation JSON for the CURRENT photo."
             if prev_image else "Inspect this photo and return the observation JSON.")
     if item_hint in RULES:
-        text += (f' The user says the subject is "{item_hint}" ({RULES[item_hint].ai_hint})'
-                 f' Use item "{item_hint}" and report the fields listed for it.')
+        key = RULES[item_hint].ai_key
+        text += (f' The user says the subject is "{key}" ({RULES[item_hint].ai_hint})'
+                 f' Use item "{key}" and report the fields listed for it.')
     content = [{"type": "text", "text": text}]
     if prev_image:
         # the BEFORE photo is only for "same item?" so low detail is enough (faster, cheaper)

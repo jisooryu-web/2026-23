@@ -81,6 +81,14 @@ cases = [
      lambda: judge(pet(label="yes"), 1, YES)["status"], "retake", False),
     ("AI값", "관찰값이 대문자 'TRUE' → true로 인정 (투명 병 전용 수거함 안내)",
      lambda: judge(pet(is_clear="TRUE"), 1, YES)["disposal"], "투명 페트병 전용 수거함", False),
+    ("AI값", "AI가 영어 이름(plastic_film_bag)으로 답함 → 품목ID P10으로 변환해 판정",
+     lambda: judge({"item": "plastic_film_bag", "observations": {"liquid": "absent", "contamination_level": "1", "plastic_part": "absent"}}, 1)["item"], "P10", False),
+    ("AI값", "AI가 'other'로 답함 → 지원 안 함",
+     lambda: judge({"item": "other"}, 1)["status"], "unsupported", False),
+    ("AI값", "API 응답의 관찰 결과에도 품목ID로 변환돼 있음 (프론트 prev_item·평가 스크립트용)",
+     lambda: (lambda r: r.json()["observation"]["item"])(call_api({**pet(), "item": "pet_bottle"}, data={"answers": json.dumps(YES)})), "P01", False),
+    ("규칙표", "ai_key가 두 품목에서 겹침 → 잡힘",
+     lambda: rules_error(lambda d: d["items"]["P02"].__setitem__("ai_key", "pet_bottle")), True, False),
     ("AI값", "item이 'p01'(소문자) → P01로 인정",
      lambda: judge({**pet(), "item": "p01"}, 1, YES)["status"], "pass", False),
     ("AI값", "오염도가 숫자 3(문자열 아님) → 3단계로 인정",
@@ -135,8 +143,8 @@ cases = [
      "pass", False),
 
     # ---------- D. 품목 확신도 ----------
-    ("인식", "지원 안 함(X00) → 품목을 직접 고르는 질문 (20개)",
-     lambda: len(judge({"item": "X00"}, 1)["questions"][0]["options"]), 20, False),
+    ("인식", "지원 안 함(X00) → 품목을 직접 고르는 질문 (기준표 품목 전부)",
+     lambda: len(judge({"item": "X00"}, 1)["questions"][0]["options"]), len(RULES_RAW["items"]), False),
     ("인식", "이미 품목을 골랐는데도 인식 실패 → 같은 질문 반복 안 함",
      lambda: judge({"item": "X00"}, 1, {"item_hint": "P01"})["questions"], [], False),
     ("인식", "품목을 직접 고르면 AI에게 알려 주고 그 품목으로 판정",
@@ -199,7 +207,9 @@ cases = [
 
     # ---------- G. 파일끼리 맞는지 (품목·필드 동기화) ----------
     ("동기화", "rules.json의 모든 품목이 AI 프롬프트에 있음",
-     lambda: [k for k in RULES_RAW["items"] if f'"{k}"' not in vision.SYSTEM_PROMPT], [], False),
+     lambda: [v["ai_key"] for v in RULES_RAW["items"].values() if f'"{v["ai_key"]}"' not in vision.SYSTEM_PROMPT], [], False),
+    ("동기화", "AI 프롬프트에 헷갈리기 쉬운 품목ID(P10, I10 등)가 없음 (영어 이름만 사용)",
+     lambda: __import__("re").findall(r"\b[PI]\d\d\b|X00", vision.SYSTEM_PROMPT), [], False),
     ("동기화", "AI 출력 키가 모두 AI 프롬프트에 설명돼 있음",
      lambda: sorted(f for f in OBSERVATION_FIELDS if f"- {f}:" not in vision.SYSTEM_PROMPT), [], False),
     ("동기화", "프론트 Mock(responses.json)이 실제 응답 모양(JudgeResponse)과 같음",

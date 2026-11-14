@@ -16,7 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from config import ALLOWED_ORIGINS, HOST, MAX_BYTES, PORT, RATE_LIMIT_PER_MIN
-from judge import judge, RULES
+from judge import judge, normalize_item, RULES
 from schemas import ErrorResponse, JudgeResponse, Observation
 from vision import observe, prepare_image
 
@@ -151,6 +151,7 @@ def judge_api(
             if hint and hint in RULES and isinstance(raw, dict):
                 raw.update(item=hint, confidence=1.0)
             obs = Observation.model_validate(raw).model_dump()
+            obs["item"] = normalize_item(obs["item"])       # "plastic_film_bag" → "P10"
         except Exception:                               # 키 없음, 네트워크, AI가 이상한 JSON을 줌 등
             log.exception("vision failed")
             raise ApiError("AI_FAILED", "AI 분석에 실패했어요. 잠시 후 다시 시도해 주세요.", 502)
