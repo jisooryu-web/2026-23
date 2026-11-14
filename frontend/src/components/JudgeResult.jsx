@@ -17,7 +17,7 @@ function JudgeResult({ result, loading, onRetake, onAnswer, onRestart }) {
   return (
     <div className={`result-card status-${j.status}`}>
       {j.name && <p className="item-name">{j.name}</p>}
-      <h2>{j.message}</h2>
+      <h2 className="message">{j.message}</h2>
 
       {/* 통과 / 대체 안내: 배출 방법을 크게 */}
       {(j.status === "pass" || j.status === "fallback") && (
