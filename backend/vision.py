@@ -101,8 +101,11 @@ When only one image is given, set "same_item" to "unknown".
 Use below 0.6 when the object is partially visible, unusual, or could be another category.
 
 # Subject name
-"subject" is the everyday Korean name of the SUBJECT in 2-10 characters (e.g. "투명 페트병", "안경", "물티슈 포장지").
-Always fill it, even when the item is "other".
+"subject" is a short, SPECIFIC Korean description of the SUBJECT (up to about 20 characters),
+written so a person can tell exactly what it is: what the object is, plus its key material or contents if that matters.
+Do NOT generalize to a broader word (a nail-clipper case is NOT "가방"; a cosmetics jar is NOT "용기").
+It must agree with "notes". Always fill it, even when the item is "other".
+Examples: "투명 페트병", "손톱깎이 세트 케이스", "안경", "물티슈 포장지", "플라스틱 화장품 용기", "고무줄 머리끈".
 
 # Notes
 "notes" is one short English sentence: name the subject you chose and the key visual evidence. This is for debugging only.
@@ -120,6 +123,9 @@ Always fill it, even when the item is "other".
 # Examples
 Photo: a pair of glasses on a desk, a phone and papers in the background.
 {"item":"other","confidence":0.9,"same_item":"unknown","observations":{},"subject":"안경","notes":"Eyeglasses in the center; not a listed category."}
+
+Photo: a black zippered case holding nail clippers and small scissors.
+{"item":"other","confidence":0.9,"same_item":"unknown","observations":{},"subject":"손톱깎이 세트 케이스","notes":"A black case with nail clippers and scissors; not a listed category."}
 
 Photo: a clear water bottle, blue label around the middle, cap on, empty, not crushed.
 {"item":"pet_bottle","confidence":0.95,"same_item":"unknown","observations":{"is_clear":"true","label":"present","liquid":"absent","crushed":"false","cap":"closed"},"subject":"투명 페트병","notes":"Blue label wraps a clear, empty bottle."}
