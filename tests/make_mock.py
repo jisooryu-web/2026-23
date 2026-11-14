@@ -14,29 +14,27 @@ from schemas import JudgeResponse, Observation
 
 OUT = os.path.join(HERE, "..", "frontend", "src", "services", "responses.json")
 
-PET = {"is_transparent": "true", "label_attached": "false", "liquid_inside": "false",
-       "food_residue": "unknown", "red_oil_stain": "unknown", "material": "unknown"}
-CUP = {"is_transparent": "unknown", "label_attached": "unknown", "liquid_inside": "unknown",
-       "food_residue": "none", "red_oil_stain": "false", "material": "styrofoam"}
+PET = {"is_clear": "true", "label": "absent", "liquid": "absent", "crushed": "true", "cap": "closed"}
+CUP = {"contamination_level": "1", "stain": "absent"}
 
 # 상태 이름: (가짜 관찰, attempt, 질문 답, prev_item)
 SCENARIOS = {
-    "pass": ({"item": "pet_bottle", "confidence": 0.95, "observations": PET,
-              "notes": "Clear, empty bottle with no label."}, 1, {"rinsed": "true"}, None),
-    "need_action": ({"item": "pet_bottle", "confidence": 0.95,
-                     "observations": {**PET, "label_attached": "true", "liquid_inside": "true"},
-                     "notes": "Blue label wraps a clear bottle with some liquid left."}, 1, {"rinsed": "true"}, None),
-    "retake": ({"item": "cup_noodle", "confidence": 0.85,
-                "observations": {**CUP, "food_residue": "unknown", "red_oil_stain": "unknown", "material": "paper"},
+    "pass": ({"item": "P01", "confidence": 0.95, "observations": PET,
+              "notes": "Clear, empty bottle with no label."}, 1, {"checkbox": "true"}, None),
+    "need_action": ({"item": "P01", "confidence": 0.95,
+                     "observations": {**PET, "label": "present", "liquid": "present", "crushed": "false"},
+                     "notes": "Blue label wraps a clear bottle with some liquid left."}, 1, {}, None),
+    "retake": ({"item": "P04", "confidence": 0.85,
+                "observations": {"contamination_level": "unknown", "stain": "absent"},
                 "notes": "Interior not visible because of the lid."}, 1, {}, None),
-    "question": ({"item": "pet_bottle", "confidence": 0.9, "observations": PET,
+    "question": ({"item": "P01", "confidence": 0.9, "observations": PET,
                   "notes": "Clear bottle, no label."}, 1, {}, None),
-    "fallback": ({"item": "cup_noodle", "confidence": 0.9, "same_item": "true",
-                  "observations": {**CUP, "red_oil_stain": "true"},
-                  "notes": "Orange stain remains on the inner wall."}, MAX_ATTEMPTS, {}, "cup_noodle"),
-    "different_item": ({"item": "receipt", "confidence": 0.9, "same_item": "false", "observations": {},
-                        "notes": "A receipt, not the bottle from the first photo."}, 2, {}, "pet_bottle"),
-    "unsupported": ({"item": "unsupported", "confidence": 0.8, "observations": {},
+    "fallback": ({"item": "P04", "confidence": 0.9, "same_item": "true",
+                  "observations": {**CUP, "stain": "present"},
+                  "notes": "Orange stain remains on the inner wall."}, MAX_ATTEMPTS, {}, "P04"),
+    "different_item": ({"item": "I01", "confidence": 0.9, "same_item": "false", "observations": {},
+                        "notes": "A receipt, not the bottle from the first photo."}, 2, {}, "P01"),
+    "unsupported": ({"item": "X00", "confidence": 0.8, "observations": {},
                      "notes": "A metal spoon."}, 1, {}, None),
 }
 

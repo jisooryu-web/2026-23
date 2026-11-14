@@ -1,4 +1,5 @@
 import responses from "./responses.json";
+import { shrinkImage } from "./shrink";
 
 // VITE_USE_MOCK=false 로 두면 실제 백엔드에 연결
 const USE_MOCK = import.meta.env.VITE_USE_MOCK !== "false";
@@ -22,10 +23,11 @@ export async function judgeImage({ image, attempt, prevImage = null, prevItem = 
     // 질문 답변: 사진 대신 직전 관찰을 보내면 서버가 AI를 다시 부르지 않음 (빠르고 비용 0)
     formData.append("observation", JSON.stringify(observation));
   } else {
-    formData.append("image", image);
+    // 올리기 전에 긴 변 1024px로 줄임 (휴대폰 원본 수 MB → 수백 KB, 업로드가 빨라짐)
+    formData.append("image", await shrinkImage(image));
   }
   formData.append("attempt", String(attempt));
-  if (prevImage && !observation) formData.append("prev_image", prevImage);
+  if (prevImage && !observation) formData.append("prev_image", await shrinkImage(prevImage));
   if (prevItem) formData.append("prev_item", prevItem);
   if (Object.keys(answers).length) formData.append("answers", JSON.stringify(answers));
 

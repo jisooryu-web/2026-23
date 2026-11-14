@@ -1,194 +1,199 @@
 {
   "pass": {
     "observation": {
-      "item": "pet_bottle",
+      "item": "P01",
       "confidence": 0.95,
       "same_item": "unknown",
       "observations": {
-        "is_transparent": "true",
-        "label_attached": "false",
-        "liquid_inside": "false",
-        "food_residue": "unknown",
-        "red_oil_stain": "unknown",
-        "material": "unknown"
+        "is_clear": "true",
+        "label": "absent",
+        "liquid": "absent",
+        "crushed": "true",
+        "cap": "closed"
       },
       "notes": "Clear, empty bottle with no label."
     },
     "judgement": {
       "status": "pass",
       "message": "분리배출할 수 있어요!",
-      "item": "pet_bottle",
+      "item": "P01",
       "attempt": 1,
       "max_attempts": 3,
       "checklist": [],
       "questions": [],
       "retake": [],
-      "warnings": [],
+      "tips": [],
+      "warnings": [
+        "뚜껑은 분리하지 말고 닫아서 함께 버려요."
+      ],
       "name": "투명 페트병",
       "type": "state",
       "disposal": "투명 페트병 전용 수거함",
-      "source": "https://scpm.seoul.go.kr/seoul-policy/evt0150"
+      "source": "S03, S04, S06"
     }
   },
   "need_action": {
     "observation": {
-      "item": "pet_bottle",
+      "item": "P01",
       "confidence": 0.95,
       "same_item": "unknown",
       "observations": {
-        "is_transparent": "true",
-        "label_attached": "true",
-        "liquid_inside": "true",
-        "food_residue": "unknown",
-        "red_oil_stain": "unknown",
-        "material": "unknown"
+        "is_clear": "true",
+        "label": "present",
+        "liquid": "present",
+        "crushed": "false",
+        "cap": "closed"
       },
       "notes": "Blue label wraps a clear bottle with some liquid left."
     },
     "judgement": {
       "status": "need_action",
       "message": "버리기 전에 아래 항목을 처리하고 다시 찍어 주세요.",
-      "item": "pet_bottle",
+      "item": "P01",
       "attempt": 1,
       "max_attempts": 3,
       "checklist": [
         {
-          "key": "liquid_inside",
-          "text": "내용물을 비우고 헹궈 주세요"
+          "key": "label",
+          "text": "라벨을 떼어 주세요. 뗀 라벨은 비닐류로 버려요."
         },
         {
-          "key": "label_attached",
-          "text": "라벨을 떼어 주세요"
+          "key": "liquid",
+          "text": "남은 음료를 비워 주세요."
+        },
+        {
+          "key": "checkbox",
+          "text": "내용물을 비우고 물로 헹궈 주세요."
         }
       ],
       "questions": [],
       "retake": [],
-      "warnings": [],
+      "tips": [
+        "찌그러뜨리면 더 좋아요."
+      ],
+      "warnings": [
+        "뚜껑은 분리하지 말고 닫아서 함께 버려요."
+      ],
       "name": "투명 페트병",
       "type": "state",
       "disposal": "투명 페트병 전용 수거함",
-      "source": "https://scpm.seoul.go.kr/seoul-policy/evt0150"
+      "source": "S03, S04, S06"
     }
   },
   "retake": {
     "observation": {
-      "item": "cup_noodle",
+      "item": "P04",
       "confidence": 0.85,
       "same_item": "unknown",
       "observations": {
-        "is_transparent": "unknown",
-        "label_attached": "unknown",
-        "liquid_inside": "unknown",
-        "food_residue": "unknown",
-        "red_oil_stain": "unknown",
-        "material": "paper"
+        "contamination_level": "unknown",
+        "stain": "absent"
       },
       "notes": "Interior not visible because of the lid."
     },
     "judgement": {
       "status": "retake",
       "message": "잘 보이지 않는 부분이 있어요. 밝은 곳에서, 안쪽이 보이게 다시 찍어 주세요.",
-      "item": "cup_noodle",
+      "item": "P04",
       "attempt": 1,
       "max_attempts": 3,
       "checklist": [],
       "questions": [],
       "retake": [
-        "food_residue",
-        "red_oil_stain"
+        "contamination_level"
       ],
+      "tips": [],
       "warnings": [],
       "name": "컵라면 용기",
       "type": "state",
-      "disposal": "재질별 분리배출 (스티로폼은 스티로폼류, 종이는 종이류)",
-      "source": "헷갈리는 재활용품, 정확히 버리는 법"
+      "disposal": "재질 표시에 따라 플라스틱(스티로폼)류 또는 종이류",
+      "source": "S09, S10"
     }
   },
   "question": {
     "observation": {
-      "item": "pet_bottle",
+      "item": "P01",
       "confidence": 0.9,
       "same_item": "unknown",
       "observations": {
-        "is_transparent": "true",
-        "label_attached": "false",
-        "liquid_inside": "false",
-        "food_residue": "unknown",
-        "red_oil_stain": "unknown",
-        "material": "unknown"
+        "is_clear": "true",
+        "label": "absent",
+        "liquid": "absent",
+        "crushed": "true",
+        "cap": "closed"
       },
       "notes": "Clear bottle, no label."
     },
     "judgement": {
       "status": "question",
-      "message": "사진으로는 확인하기 어려운 부분이 있어요. 아래 질문에 답해 주세요.",
-      "item": "pet_bottle",
+      "message": "마지막으로 확인할게요. 아래 항목을 하셨나요?",
+      "item": "P01",
       "attempt": 1,
       "max_attempts": 3,
       "checklist": [],
       "questions": [
         {
-          "key": "rinsed",
-          "text": "내부를 물로 헹구셨나요?",
+          "key": "checkbox",
+          "text": "내용물을 비우고 물로 헹궜어요",
           "options": [
             {
-              "label": "예",
+              "label": "네, 했어요",
               "value": "true"
             },
             {
-              "label": "아니요",
+              "label": "아직 안 했어요",
               "value": "false"
             }
           ]
         }
       ],
       "retake": [],
-      "warnings": [],
+      "tips": [],
+      "warnings": [
+        "뚜껑은 분리하지 말고 닫아서 함께 버려요."
+      ],
       "name": "투명 페트병",
       "type": "state",
       "disposal": "투명 페트병 전용 수거함",
-      "source": "https://scpm.seoul.go.kr/seoul-policy/evt0150"
+      "source": "S03, S04, S06"
     }
   },
   "fallback": {
     "observation": {
-      "item": "cup_noodle",
+      "item": "P04",
       "confidence": 0.9,
       "same_item": "true",
       "observations": {
-        "is_transparent": "unknown",
-        "label_attached": "unknown",
-        "liquid_inside": "unknown",
-        "food_residue": "none",
-        "red_oil_stain": "true",
-        "material": "styrofoam"
+        "contamination_level": "1",
+        "stain": "present"
       },
       "notes": "Orange stain remains on the inner wall."
     },
     "judgement": {
       "status": "fallback",
-      "message": "여러 번 확인했지만 처리가 어려워 보여요. 아래 방법으로 배출해 주세요.",
-      "item": "cup_noodle",
+      "message": "헹궈도 붉은 착색이 남으면 종량제봉투로 버려 주세요.",
+      "item": "P04",
       "attempt": 3,
       "max_attempts": 3,
       "checklist": [
         {
-          "key": "red_oil_stain",
-          "text": "물로 헹궈 주세요"
+          "key": "stain",
+          "text": "물로 헹궈 주세요. 헹궈도 지워지지 않으면 종량제봉투로 버려요."
         }
       ],
       "questions": [],
       "retake": [],
+      "tips": [],
       "warnings": [],
       "name": "컵라면 용기",
       "type": "state",
-      "disposal": "종량제봉투 (헹궈도 착색이 남는 경우)",
-      "source": "헷갈리는 재활용품, 정확히 버리는 법"
+      "disposal": "종량제봉투",
+      "source": "S09, S10"
     }
   },
   "different_item": {
     "observation": {
-      "item": "receipt",
+      "item": "I01",
       "confidence": 0.9,
       "same_item": "false",
       "observations": {},
@@ -197,18 +202,19 @@
     "judgement": {
       "status": "different_item",
       "message": "처음 찍은 물건과 다른 물건 같아요. 같은 물건을 다시 찍어 주세요.",
-      "item": "receipt",
+      "item": "I01",
       "attempt": 2,
       "max_attempts": 3,
       "checklist": [],
       "questions": [],
       "retake": [],
+      "tips": [],
       "warnings": []
     }
   },
   "unsupported": {
     "observation": {
-      "item": "unsupported",
+      "item": "X00",
       "confidence": 0.8,
       "same_item": "unknown",
       "observations": {},
@@ -216,13 +222,14 @@
     },
     "judgement": {
       "status": "unsupported",
-      "message": "아직 지원하지 않는 품목이에요.",
-      "item": "unsupported",
+      "message": "지원하지 않는 품목이에요. '내 손안의 분리배출' 앱이나 구청 홈페이지에서 확인해 주세요.",
+      "item": "X00",
       "attempt": 1,
       "max_attempts": 3,
       "checklist": [],
       "questions": [],
       "retake": [],
+      "tips": [],
       "warnings": []
     }
   }

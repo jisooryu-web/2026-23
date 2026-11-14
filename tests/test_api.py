@@ -8,8 +8,8 @@ from PIL import Image
 
 import app as server
 
-FAKE = {"item": "pet_bottle", "confidence": 0.9, "same_item": "unknown",
-        "observations": {"is_transparent": "true", "label_attached": "true", "liquid_inside": "false"},
+FAKE = {"item": "P01", "confidence": 0.9, "same_item": "unknown",
+        "observations": {"is_clear": "true", "label": "absent", "liquid": "absent"},
         "notes": "fake"}
 server.observe = lambda cur, prev=None: FAKE          # AI 대신 가짜 관찰
 client = TestClient(server.app)
@@ -29,14 +29,14 @@ def status_of(res):
 # (이름, 요청 함수, 기대 HTTP 코드, 기대 status 또는 오류 code)
 cases = [
     ("서버 확인", lambda: client.get("/health"), 200, None),
-    ("첫 판정: 헹굼 질문", lambda: client.post("/judge", files={"image": jpg()}, data={"attempt": "1"}), 200, "question"),
-    ("답 보내고 다시 판정", lambda: client.post("/judge", files={"image": jpg()}, data={"attempt": "1", "answers": '{"rinsed": "true"}'}), 200, "need_action"),
+    ("첫 판정: 체크박스 질문", lambda: client.post("/judge", files={"image": jpg()}, data={"attempt": "1"}), 200, "question"),
+    ("체크하고 다시 판정 → 통과", lambda: client.post("/judge", files={"image": jpg()}, data={"attempt": "1", "answers": '{"checkbox": "true"}'}), 200, "pass"),
     ("사진 없음", lambda: client.post("/judge", data={"attempt": "1"}), 400, "NO_IMAGE"),
     ("attempt가 숫자 아님", lambda: client.post("/judge", files={"image": jpg()}, data={"attempt": "abc"}), 400, "BAD_REQUEST"),
     ("answers가 JSON 아님", lambda: client.post("/judge", files={"image": jpg()}, data={"answers": "{oops"}), 400, "BAD_REQUEST"),
     ("이미지가 아닌 파일", lambda: client.post("/judge", files={"image": ("a.jpg", b"not image", "image/jpeg")}), 400, "BAD_IMAGE"),
     ("재촬영: 다른 품목", lambda: client.post("/judge", files={"image": jpg(), "prev_image": jpg()},
-                                         data={"attempt": "2", "prev_item": "receipt"}), 200, "different_item"),
+                                         data={"attempt": "2", "prev_item": "I01"}), 200, "different_item"),
 ]
 
 failed = 0
@@ -47,7 +47,7 @@ for name, call, code, expected in cases:
     print("O" if ok else "X", name, "→", res.status_code, "" if expected is None else status_of(res))
 
 # 응답에 None 값이 섞여 나가지 않는지 (unsupported면 name 등이 아예 빠져야 함)
-server.observe = lambda cur, prev=None: {"item": "unsupported"}
+server.observe = lambda cur, prev=None: {"item": "X00"}
 res = client.post("/judge", files={"image": jpg()})
 ok = res.status_code == 200 and "name" not in res.json()["judgement"]
 failed += not ok
@@ -58,7 +58,7 @@ print("O" if ok else "X", "지원 안 하는 품목은 name 없이 응답 →", 
 server.observe = lambda cur, prev=None: {**FAKE, "confidence": 0.3}
 res = client.post("/judge", files={"image": jpg()})
 q = res.json()["judgement"]["questions"]
-ok = res.status_code == 200 and q and q[0]["key"] == "confirm_pet_bottle"
+ok = res.status_code == 200 and q and q[0]["key"] == "confirm_P01"
 failed += not ok
 print("O" if ok else "X", "확신 낮음 → 품목 확인 질문 →", q[0]["text"] if q else None)
 
@@ -66,8 +66,8 @@ print("O" if ok else "X", "확신 낮음 → 품목 확인 질문 →", q[0]["te
 # 질문에 답할 때 직전 관찰을 보내면 AI를 부르지 않음 (사진도 필요 없음)
 calls = []
 server.observe = lambda cur, prev=None: calls.append(1) or FAKE
-res = client.post("/judge", data={"observation": json.dumps(FAKE), "answers": '{"rinsed": "true"}'})
-ok = res.status_code == 200 and status_of(res) == "need_action" and not calls
+res = client.post("/judge", data={"observation": json.dumps(FAKE), "answers": '{"checkbox": "true"}'})
+ok = res.status_code == 200 and status_of(res) == "pass" and not calls
 failed += not ok
 print("O" if ok else "X", "관찰 재사용 → AI 호출 없이 판정 →", status_of(res), "/ AI 호출", len(calls), "회")
 
