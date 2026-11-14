@@ -3,16 +3,23 @@
   "messages": {
     "pass": "분리배출할 수 있어요!",
     "need_action": "버리기 전에 아래 항목을 처리하고 다시 찍어 주세요.",
-    "retake": "잘 보이지 않는 부분이 있어요. 밝은 곳에서, 안쪽이 보이게 다시 찍어 주세요.",
+    "retake": "잘 보이지 않는 부분이 있어요: {fields}. 밝은 곳에서 그 부분이 잘 보이게 다시 찍어 주세요.",
     "question": "사진으로는 확인하기 어려운 부분이 있어요. 아래 질문에 답해 주세요.",
     "fallback": "여러 번 확인했지만 처리가 어려워 보여요. 아래 방법으로 배출해 주세요.",
     "different_item": "처음 찍은 물건과 다른 물건 같아요. 같은 물건을 다시 찍어 주세요.",
+    "same_item_question": "처음 찍은 물건과 같은 물건이 맞나요?",
     "unsupported": "지원하지 않는 품목이에요. '내 손안의 분리배출' 앱이나 구청 홈페이지에서 확인해 주세요.",
     "not_confirmed": "어떤 물건인지 확인하지 못했어요. 물건 전체가 잘 보이게 다시 찍어 주세요.",
     "confirm_question": "사진 속 물건이 '{name}' 맞나요?",
     "checkbox_question": "마지막으로 확인할게요. 아래 항목을 하셨나요?",
     "checkbox_yes": "네, 했어요",
     "checkbox_no": "아직 안 했어요"
+  },
+  "field_labels": {
+    "is_clear": "병 색(투명한지)", "label": "라벨", "liquid": "남은 내용물", "crushed": "찌그러짐", "cap": "뚜껑",
+    "contamination_level": "용기 안쪽", "stain": "얼룩", "other_material": "다른 재질", "plastic_part": "플라스틱 마개",
+    "broken": "깨진 곳", "foreign_object": "병 안 이물질", "pump_attached": "펌프", "is_white": "스티로폼 색",
+    "tape_label": "테이프·송장", "umbrella_type": "우산 종류"
   },
   "contamination": {
     "1": {"name": "깨끗함", "result": "pass", "text": "깨끗해요! 바로 배출할 수 있어요."},

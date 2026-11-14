@@ -6,9 +6,15 @@ const USE_MOCK = import.meta.env.VITE_USE_MOCK !== "false";
 
 // 개발 중: "/api" → vite.config.js 프록시가 http://127.0.0.1:5001 로 전달
 // 배포 후: VITE_API_BASE_URL=https://백엔드주소
-const API_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+// 끝에 "/"를 붙여 넣어도 "//judge"가 되지 않게 제거
+const API_URL = (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/+$/, "");
 
 export const isMock = USE_MOCK;
+
+// 무료 배포 서버는 한동안 안 쓰면 잠든다. 앱을 열자마자 깨워 두면, 사진을 찍는 동안 켜진다.
+export function wakeServer() {
+  if (!USE_MOCK) fetch(`${API_URL}/health`).catch(() => {});
+}
 
 export async function judgeImage({ image, attempt, prevImage = null, prevItem = null, answers = {}, observation = null, mockStatus = "pass" }) {
   if (USE_MOCK) {

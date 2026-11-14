@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import JudgeResult from "./components/JudgeResult";
-import { judgeImage, isMock } from "./services/judgeApi";
+import { judgeImage, isMock, wakeServer } from "./services/judgeApi";
 import "./App.css";
 
 const MOCK_STATUSES = ["pass", "need_action", "retake", "question", "fallback", "different_item", "unsupported"];
@@ -16,6 +16,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [mockStatus, setMockStatus] = useState("pass");
+
+  useEffect(() => {
+    wakeServer();
+  }, []);
 
   useEffect(() => {
     if (!file) {
@@ -84,7 +88,12 @@ function App() {
     if (countsAsAttempt) setAttempt((prev) => prev + 1);
     // 체크리스트의 체크박스 항목(예: "헹궈 주세요")은 체크하고 다시 찍었으니 '했어요'로 기억 → 다음 판정에서 다시 묻지 않음
     const checkedBox = (result?.judgement?.checklist ?? []).some((item) => item.key === "checkbox");
-    if (countsAsAttempt && checkedBox) setAnswers((prev) => ({ ...prev, checkbox: "true" }));
+    setAnswers((prev) => {
+      const next = { ...prev };
+      delete next.confirm_same_item; // "같은 물건이 맞나요?"는 새 사진마다 다시 확인
+      if (countsAsAttempt && checkedBox) next.checkbox = "true";
+      return next;
+    });
     setFile(null);
     setResult(null);
     setError("");

@@ -15,6 +15,7 @@ from fastapi.testclient import TestClient
 from PIL import Image
 
 import app as server
+server.RATE_LIMIT_PER_MIN = 0                      # 테스트는 요청이 많으므로 요청 수 제한 끄기 (아래에서 따로 검사)
 import vision
 from judge import judge, MAX_ATTEMPTS
 from schemas import JudgeResponse, OBSERVATION_FIELDS, RuleSet
@@ -109,11 +110,15 @@ cases = [
      lambda: judge(pet(label="present"), 10, YES)["status"], "fallback", False),
     ("흐름", "prev_item만 있고 prev_image가 없음 → 비교 없이 판정 계속",
      lambda: api_code(call_api(pet(), data={"attempt": "2", "prev_item": "P01", "answers": json.dumps(YES)})), "pass", False),
+    ("흐름", "재촬영 안내에 무엇이 안 보였는지 나옴",
+     lambda: "라벨" in judge(pet(label="unknown"), 1, YES)["message"], True, False),
+    ("흐름", "마지막 촬영에서 끝나면, 사진으로 확인 못 한 항목을 직접 확인 목록으로",
+     lambda: [c["key"] for c in judge(pet(label="unknown"), MAX_ATTEMPTS, YES)["checklist"]], ["label"], False),
     ("흐름", "오염도 5단계는 첫 촬영이어도 바로 종량제봉투",
      lambda: judge({"item": "P03", "observations": {"contamination_level": "5"}}, 1)["disposal"], "종량제봉투", False),
     ("흐름", "처음 사진과 같은 물건인데 AI가 same_item=false라고 하면 different_item이 반복될 수 있음 → 사용자 확인 필요",
      lambda: judge({**pet(), "same_item": "false"}, 2, {**YES, "confirm_same_item": "true"}, prev_item="P01")["status"],
-     "pass", True),
+     "pass", False),
 
     # ---------- D. 품목 확신도 ----------
     ("확신도", "confidence 0.59 → 품목 확인 질문",
@@ -134,9 +139,9 @@ cases = [
      "TOO_LARGE", False),
     ("업로드", "처음 사진(prev_image)만 깨짐 → 지금 사진으로는 판정 계속",
      lambda: api_code(call_api(pet(), files={"image": jpg(), "prev_image": ("x.jpg", b"broken", "image/jpeg")},
-                               data={"attempt": "2", "prev_item": "P01", "answers": json.dumps(YES)})), "pass", True),
+                               data={"attempt": "2", "prev_item": "P01", "answers": json.dumps(YES)})), "pass", False),
     ("업로드", "아주 작은 사진(10x10) → AI까지 보내지 말고 다시 찍기 안내",
-     lambda: api_code(call_api(pet(), files={"image": jpg((10, 10))}, data={"answers": json.dumps(YES)})), "BAD_IMAGE", True),
+     lambda: api_code(call_api(pet(), files={"image": jpg((10, 10))}, data={"answers": json.dumps(YES)})), "BAD_IMAGE", False),
 
     # ---------- F. 규칙표(rules.json) 실수 ----------
     ("규칙표", "AI 출력 키 오타(lable) → 서버 시작 전에 잡힘",
@@ -163,6 +168,8 @@ cases = [
      lambda: rules_error(lambda d: d["messages"].__setitem__("confirm_question", "이 물건 맞나요?")), True, False),
     ("규칙표", "품목에 ai_hint(AI용 설명)가 없음 → 잡힘",
      lambda: rules_error(lambda d: d["items"]["I01"].pop("ai_hint")), True, False),
+    ("규칙표", "field_labels에 AI 출력 키 하나가 빠짐 → 잡힘",
+     lambda: rules_error(lambda d: d["field_labels"].pop("stain")), True, False),
     ("규칙표", "예약 ID 'X00'을 품목으로 씀 → 잡힘",
      lambda: rules_error(lambda d: d["items"].__setitem__("X00", d["items"]["I01"])), True, False),
 

@@ -153,7 +153,7 @@ class Level(BaseModel):
 
 
 STATUSES = ("pass", "need_action", "retake", "question", "fallback", "different_item", "unsupported")
-REQUIRED_MESSAGES = set(STATUSES) | {"not_confirmed", "confirm_question",
+REQUIRED_MESSAGES = set(STATUSES) | {"not_confirmed", "confirm_question", "same_item_question",
                                      "checkbox_question", "checkbox_yes", "checkbox_no"}
 
 
@@ -161,6 +161,7 @@ class RuleSet(BaseModel):
     model_config = ConfigDict(extra="forbid")
     version: str
     messages: Dict[str, str]                    # 화면 문구. 기획팀이 파이썬 없이 고칠 수 있게
+    field_labels: Dict[str, str]                # AI 출력 키의 한국어 이름 (재촬영 이유 안내용)
     contamination: Dict[str, Level]             # 오염도 5단계
     items: Dict[str, Rule]
 
@@ -171,6 +172,8 @@ class RuleSet(BaseModel):
             raise ValueError(f"messages에 빠진 문구가 있어요: {sorted(missing)}")
         if "{name}" not in self.messages["confirm_question"]:
             raise ValueError("confirm_question 문구에는 품목 이름 자리 {name}이 필요해요")
+        if set(self.field_labels) != set(FIELD_VALUES):
+            raise ValueError(f"field_labels에는 AI 출력 키가 모두 있어야 해요: {sorted(set(FIELD_VALUES) ^ set(self.field_labels))}")
         if set(self.contamination) != FIELD_VALUES["contamination_level"]:
             raise ValueError("contamination에는 1~5단계가 모두 있어야 해요")
         if self.contamination["2"].result == "checkbox" and not self.contamination["2"].checkbox:

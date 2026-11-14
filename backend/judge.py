@@ -25,9 +25,11 @@ with open(os.path.join(os.path.dirname(__file__), "rules.json"), encoding="utf-8
 RULES = RULESET.items                                # {"P01": Rule, ...}
 MESSAGES = RULESET.messages                          # 화면 문구도 rules.json에서
 LEVELS = RULESET.contamination                       # 오염도 5단계
+LABELS = RULESET.field_labels                        # "label" → "라벨"
 
 YES_NO = [{"label": "예", "value": "true"}, {"label": "아니요", "value": "false"}]
 CHECKBOX_KEY = "checkbox"                            # answers에서 체크박스 답의 키
+SAME_KEY = "confirm_same_item"                       # "같은 물건이 맞나요?" 답의 키
 
 
 def _norm(v):
@@ -64,8 +66,14 @@ def judge(result, attempt=1, answers=None, prev_item=None):
         return _done(out, "unsupported", MESSAGES["not_confirmed"] if item == "UNKNOWN" else None)
 
     # 재촬영인데 다른 물건이면 판정하지 않음 (깨끗한 다른 병으로 통과하는 꼼수 방지)
-    if prev_item and (not _related(item, prev_item.strip().upper()) or result.get("same_item") == "false"):
-        return _done(out, "different_item")
+    if prev_item:
+        if not _related(item, prev_item.strip().upper()):
+            return _done(out, "different_item")
+        if result.get("same_item") == "false" and answers.get(SAME_KEY) != "true":
+            # 품목은 같은데 AI만 '다른 물건'이라고 봄 → 사용자에게 한 번 확인 (AI 오판으로 무한 반복 방지)
+            if answers.get(SAME_KEY) != "false":
+                out["questions"].append({"key": SAME_KEY, "text": MESSAGES["same_item_question"], "options": YES_NO})
+            return _done(out, "different_item")
 
     # AI가 품목을 확신하지 못하면, 기준을 적용하기 전에 사용자에게 품목부터 확인
     confirm_key = f"confirm_{item}"
@@ -136,13 +144,22 @@ def _evaluate(item, obs, attempt, answers, out):
 
     checked = answers.get(CHECKBOX_KEY) == "true"
     if out["checklist"] or out["retake"]:
-        # 처리할 일이 있으면 체크박스도 체크리스트에 함께 (다시 찍을 때 체크하면 재질문 안 함)
-        if out["checklist"] and checkbox and not checked:
-            out["checklist"].append({"key": CHECKBOX_KEY, "text": checkbox_action})
-        if attempt >= MAX_ATTEMPTS:                    # 재촬영 한도 → 대체 안내로 종료
+        if attempt >= MAX_ATTEMPTS:                    # 재촬영 한도 → 남은 항목을 직접 확인하라는 대체 안내로 종료
+            actions = {c.key: c.action for c in rule.conditions if c.action}
+            out["checklist"] += [{"key": k, "text": actions.get(k) or f"{LABELS[k]} 상태를 직접 확인해 주세요."}
+                                 for k in out["retake"]]
+            if checkbox and not checked:
+                out["checklist"].append({"key": CHECKBOX_KEY, "text": checkbox_action})
             out["disposal"] = rule.fallback_disposal
             return _done(out, "fallback", rule.fallback_message)
-        return _done(out, "need_action" if out["checklist"] else "retake")
+        if out["checklist"]:
+            # 처리할 일이 있으면 체크박스도 체크리스트에 함께 (다시 찍을 때 체크하면 재질문 안 함)
+            if checkbox and not checked:
+                out["checklist"].append({"key": CHECKBOX_KEY, "text": checkbox_action})
+            return _done(out, "need_action")
+        # 무엇이 안 보였는지 알려 줘야 사용자가 그 부분을 찍는다
+        fields = ", ".join(dict.fromkeys(LABELS[k] for k in out["retake"]))
+        return _done(out, "retake", MESSAGES["retake"].replace("{fields}", fields))
 
     if checkbox and not checked:
         if answers.get(CHECKBOX_KEY) == "false":       # 아직 안 했다고 함 → 할 일로

@@ -93,7 +93,7 @@
     },
     "judgement": {
       "status": "retake",
-      "message": "잘 보이지 않는 부분이 있어요. 밝은 곳에서, 안쪽이 보이게 다시 찍어 주세요.",
+      "message": "잘 보이지 않는 부분이 있어요: 용기 안쪽. 밝은 곳에서 그 부분이 잘 보이게 다시 찍어 주세요.",
       "item": "P04",
       "attempt": 1,
       "max_attempts": 3,
