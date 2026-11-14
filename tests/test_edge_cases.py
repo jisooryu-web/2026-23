@@ -15,6 +15,7 @@ from fastapi.testclient import TestClient
 from PIL import Image
 
 import app as server
+server.RATE_LIMIT_PER_MIN = 0                      # 테스트는 요청이 많으므로 요청 수 제한 끄기 (아래에서 따로 검사)
 import vision
 from judge import judge, MAX_ATTEMPTS
 from schemas import JudgeResponse, OBSERVATION_FIELDS, RuleSet

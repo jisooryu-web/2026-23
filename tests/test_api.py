@@ -7,6 +7,7 @@ from fastapi.testclient import TestClient
 from PIL import Image
 
 import app as server
+server.RATE_LIMIT_PER_MIN = 0                      # 테스트는 요청이 많으므로 요청 수 제한 끄기 (아래에서 따로 검사)
 
 FAKE = {"item": "P01", "confidence": 0.9, "same_item": "unknown",
         "observations": {"is_clear": "true", "label": "absent", "liquid": "absent"},
@@ -81,6 +82,24 @@ ok = res.status_code == 502 and status_of(res) == "AI_FAILED"
 failed += not ok
 print("O" if ok else "X", "AI 실패 →", res.status_code, status_of(res))
 
-total = len(cases) + 4
+# 같은 IP가 1분에 너무 많이 요청하면 429 (AI 비용 보호)
+server.observe = lambda cur, prev=None: FAKE
+server.RATE_LIMIT_PER_MIN = 2
+server._recent.clear()
+codes = [client.post("/judge", files={"image": jpg()}, headers={"x-forwarded-for": "1.2.3.4"}).status_code for _ in range(3)]
+other = client.post("/judge", files={"image": jpg()}, headers={"x-forwarded-for": "5.6.7.8"}).status_code
+ok = codes == [200, 200, 429] and other == 200
+failed += not ok
+print("O" if ok else "X", "요청 수 제한 → 같은 IP 3번째는 429, 다른 IP는 통과 →", codes, other)
+server.RATE_LIMIT_PER_MIN = 0
+
+# 본문 크기를 받기 전에 확인 (Content-Length가 너무 크면 바로 413)
+res = client.post("/judge", content=b"x", headers={"content-length": str(100 * 1024 * 1024),
+                                                    "content-type": "multipart/form-data; boundary=x"})
+ok = res.status_code == 413 and status_of(res) == "TOO_LARGE"
+failed += not ok
+print("O" if ok else "X", "100MB 요청 → 본문 받기 전에 413 →", res.status_code)
+
+total = len(cases) + 6
 print(f"\n{total - failed}/{total} 통과")
 sys.exit(1 if failed else 0)

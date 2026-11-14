@@ -1,26 +1,28 @@
 """API 서버 (FastAPI). 계약(요청·응답 형식)은 backend/API.md 참고.
 
 실행:  cd backend && uvicorn app:app --reload --port 5001
+배포:  uvicorn app:app --host 0.0.0.0 --port $PORT     (Render 등의 Start Command)
 문서:  http://127.0.0.1:5001/docs  (브라우저에서 바로 테스트 가능)
 """
 import json
 import logging
 import time
+from collections import defaultdict, deque
 from typing import Optional
 
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import FastAPI, File, Form, Request, UploadFile
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from config import ALLOWED_ORIGINS, MAX_BYTES
+from config import ALLOWED_ORIGINS, HOST, MAX_BYTES, PORT, RATE_LIMIT_PER_MIN
 from judge import judge
 from schemas import ErrorResponse, JudgeResponse, Observation
 from vision import observe, prepare_image
 
 log = logging.getLogger("uvicorn.error")
 
-app = FastAPI(title="분리배출 판정 API", version="0.2.0")
+app = FastAPI(title="분리배출 판정 API", version="0.3.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -48,7 +50,40 @@ async def handle_validation_error(_, e: RequestValidationError):
                         status_code=400)
 
 
-ERRORS = {400: {"model": ErrorResponse}, 413: {"model": ErrorResponse}, 502: {"model": ErrorResponse}}
+ERRORS = {400: {"model": ErrorResponse}, 413: {"model": ErrorResponse},
+          429: {"model": ErrorResponse}, 502: {"model": ErrorResponse}}
+
+
+# ---------- 요청 보호: 너무 큰 요청, 너무 잦은 요청 ----------
+
+_recent = defaultdict(deque)                            # IP → 최근 1분 요청 시각
+
+
+def _client_ip(request: Request) -> str:
+    # Render·Vercel 같은 배포 환경은 프록시를 거치므로 원래 IP가 X-Forwarded-For 맨 앞에 있다
+    fwd = request.headers.get("x-forwarded-for")
+    return fwd.split(",")[0].strip() if fwd else (request.client.host if request.client else "?")
+
+
+@app.middleware("http")
+async def guard(request: Request, call_next):
+    if request.method == "POST" and request.url.path == "/judge":
+        # 1) 본문을 다 받기 전에 크기부터 확인 (사진 2장 + 여유)
+        size = request.headers.get("content-length")
+        if size and size.isdigit() and int(size) > 2 * MAX_BYTES + 1024 * 1024:
+            return JSONResponse({"error": {"code": "TOO_LARGE", "message": "사진 용량이 너무 커요 (최대 15MB)."}},
+                                status_code=413)
+        # 2) 같은 IP의 1분 요청 수 제한 (메모리에만 기록, 서버 재시작 시 초기화)
+        if RATE_LIMIT_PER_MIN > 0:
+            now, q = time.monotonic(), _recent[_client_ip(request)]
+            while q and now - q[0] > 60:
+                q.popleft()
+            if len(q) >= RATE_LIMIT_PER_MIN:
+                return JSONResponse({"error": {"code": "RATE_LIMITED",
+                                               "message": "요청이 너무 많아요. 잠시 후 다시 시도해 주세요."}},
+                                    status_code=429)
+            q.append(now)
+    return await call_next(request)
 
 
 def read_upload(f: UploadFile) -> bytes:
@@ -116,6 +151,6 @@ def judge_api(
     return {"observation": obs, "judgement": result}
 
 
-if __name__ == "__main__":                              # python app.py 로도 실행 가능
+if __name__ == "__main__":                              # python app.py 로도 실행 가능 (개발용, 코드 바꾸면 자동 재시작)
     import uvicorn
-    uvicorn.run("app:app", host="127.0.0.1", port=5001, reload=True)
+    uvicorn.run("app:app", host=HOST, port=PORT, reload=True)
