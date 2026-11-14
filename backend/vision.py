@@ -38,10 +38,19 @@ A separate rule engine makes all decisions based on your observations.
    (e.g. between contamination level 2 and 3, answer "3"; if a label might remain, do not answer "absent").
 4. Output a single JSON object only. No markdown, no explanations outside the JSON.
 
-# Item categories (choose exactly one item ID)
+# Choosing the subject (do this first)
+The photo is taken by a user who wants to throw away ONE object. Other things often appear too
+(table, floor, shelves, other trash, packaging, hands). Pick the SUBJECT: the object the photographer is aiming at.
+- Usually it is near the center, the largest in the frame, in the sharpest focus, closest to the camera, or held in a hand.
+- Ignore everything else completely. Background objects must never change your answer and never make it "X00".
+- All observation fields describe the SUBJECT only.
+
+# Item categories (choose exactly one item ID for the SUBJECT)
 {ITEM_LINES}
-- "X00": anything else, multiple different items with no clear main item, or you cannot tell.
-If several objects appear, judge only the single largest, most central object.
+- "X00": the SUBJECT is clearly none of the categories above (e.g. a spoon, a phone, clothing, food itself).
+- "unknown": there is no recognizable subject at all (blank, extremely dark or blurred, only background).
+If the subject looks like one of the categories but you are not sure, choose that category with confidence below 0.6.
+Do NOT use "X00" just because you are uncertain.
 
 # Observation fields
 Include ONLY the fields listed for the chosen item. Leave every other field out.
@@ -88,7 +97,7 @@ When only one image is given, set "same_item" to "unknown".
 Use below 0.6 when the object is partially visible, unusual, or could be another category.
 
 # Notes
-"notes" is one short English sentence explaining the key visual evidence. This is for debugging only.
+"notes" is one short English sentence: name the subject you chose and the key visual evidence. This is for debugging only.
 
 # Output format
 {
@@ -125,7 +134,7 @@ def _values(key):
 
 
 ITEM_LINES = "\n".join(f'- "{key}": {rule.ai_hint}' for key, rule in RULES.items())
-ITEM_KEYS = " | ".join(f'"{key}"' for key in [*RULES, UNSUPPORTED])
+ITEM_KEYS = " | ".join(f'"{key}"' for key in [*RULES, UNSUPPORTED, "unknown"])
 FIELD_LINES = "\n".join(
     f'- {key}: ' + (", ".join(f"{f} ({_values(f)})" for f in _fields(rule)) or "no fields")
     for key, rule in RULES.items())
@@ -156,11 +165,15 @@ def _image_part(jpeg: bytes, detail: str = "high"):
     return {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}", "detail": detail}}
 
 
-def observe(image: bytes, prev_image: bytes | None = None) -> dict:
-    """image / prev_image: JPEG bytes from prepare_image()."""
-    content = [{"type": "text", "text": (
-        "Two images follow: BEFORE, then CURRENT. Return the observation JSON for the CURRENT photo."
-        if prev_image else "Inspect this photo and return the observation JSON.")}]
+def observe(image: bytes, prev_image: bytes | None = None, item_hint: str | None = None) -> dict:
+    """image / prev_image: JPEG bytes from prepare_image().
+    item_hint: item ID the user picked by hand (e.g. "P01") when the AI could not recognize the subject."""
+    text = ("Two images follow: BEFORE, then CURRENT. Return the observation JSON for the CURRENT photo."
+            if prev_image else "Inspect this photo and return the observation JSON.")
+    if item_hint in RULES:
+        text += (f' The user says the subject is "{item_hint}" ({RULES[item_hint].ai_hint})'
+                 f' Use item "{item_hint}" and report the fields listed for it.')
+    content = [{"type": "text", "text": text}]
     if prev_image:
         # the BEFORE photo is only for "same item?" so low detail is enough (faster, cheaper)
         content.append(_image_part(prev_image, PREV_IMAGE_DETAIL))

@@ -46,6 +46,15 @@ def call_api(fake_observation, files=None, data=None):
     return client.post("/judge", files=files or {"image": jpg()}, data=data or {})
 
 
+def call_hint(seen):
+    """item_hint를 보내면 observe에 힌트가 전달되고, AI가 X00이라고 해도 사용자가 고른 품목으로 판정되는지."""
+    def fake(cur, prev=None, hint=None):
+        seen.append(hint)
+        return {"item": "X00", "confidence": 0.3, "observations": {"is_clear": "true", "label": "absent", "liquid": "absent"}}
+    server.observe = fake
+    return client.post("/judge", files={"image": jpg()}, data={"answers": json.dumps({"item_hint": "P01"})})
+
+
 def api_code(res):
     body = res.json()
     return body["judgement"]["status"] if res.status_code == 200 else body["error"]["code"]
@@ -126,6 +135,12 @@ cases = [
      "pass", False),
 
     # ---------- D. 품목 확신도 ----------
+    ("인식", "지원 안 함(X00) → 품목을 직접 고르는 질문 (20개)",
+     lambda: len(judge({"item": "X00"}, 1)["questions"][0]["options"]), 20, False),
+    ("인식", "이미 품목을 골랐는데도 인식 실패 → 같은 질문 반복 안 함",
+     lambda: judge({"item": "X00"}, 1, {"item_hint": "P01"})["questions"], [], False),
+    ("인식", "품목을 직접 고르면 AI에게 알려 주고 그 품목으로 판정",
+     lambda: (lambda seen: (api_code(call_hint(seen)), seen))([]), ("question", ["P01"]), False),
     ("확신도", "confidence 0.59 → 품목 확인 질문",
      lambda: judge({**pet(), "confidence": 0.59}, 1, YES)["status"], "question", False),
     ("확신도", "confidence 0.6 (경계값) → 확인 질문 없이 판정",

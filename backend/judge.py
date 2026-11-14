@@ -31,6 +31,7 @@ PLACES = RULESET.places                              # "plastic" → {title, whe
 YES_NO = [{"label": "예", "value": "true"}, {"label": "아니요", "value": "false"}]
 CHECKBOX_KEY = "checkbox"                            # answers에서 체크박스 답의 키
 SAME_KEY = "confirm_same_item"                       # "같은 물건이 맞나요?" 답의 키
+HINT_KEY = "item_hint"                               # 사용자가 직접 고른 품목ID
 
 
 def _norm(v):
@@ -68,7 +69,7 @@ def judge(result, attempt=1, answers=None, prev_item=None):
            "checklist": [], "questions": [], "retake": [], "tips": [], "warnings": [], "how": [], "places": []}
 
     if item not in RULES:
-        return _done(out, "unsupported", MESSAGES["not_confirmed"] if item == "UNKNOWN" else None)
+        return _unsupported(out, answers, MESSAGES["not_confirmed"] if item == "UNKNOWN" else None)
 
     # 재촬영인데 다른 물건이면 판정하지 않음 (깨끗한 다른 병으로 통과하는 꼼수 방지)
     if prev_item:
@@ -91,9 +92,17 @@ def judge(result, attempt=1, answers=None, prev_item=None):
                                      "text": MESSAGES["confirm_question"].replace("{name}", RULES[item].name)})
             return _done(out, "question")
         if answer == "false":
-            return _done(out, "unsupported", MESSAGES["not_confirmed"])
+            return _unsupported(out, answers, MESSAGES["not_confirmed"])
 
     return _evaluate(item, clean_observations(result.get("observations")), attempt, answers, out)
+
+
+def _unsupported(out, answers, message=None):
+    """인식 실패·지원 안 함 → 사용자가 품목을 직접 고를 수 있게 목록 제공 (이미 골랐으면 다시 묻지 않음)"""
+    if not answers.get(HINT_KEY):
+        out["questions"].append({"key": HINT_KEY, "text": MESSAGES["pick_item_question"],
+                                 "options": [{"label": r.name, "value": k} for k, r in RULES.items()]})
+    return _done(out, "unsupported", message)
 
 
 def _evaluate(item, obs, attempt, answers, out):

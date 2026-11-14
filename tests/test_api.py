@@ -86,11 +86,15 @@ print("O" if ok else "X", "AI 실패 →", res.status_code, status_of(res))
 server.observe = lambda cur, prev=None: FAKE
 server.RATE_LIMIT_PER_MIN = 2
 server._recent.clear()
-codes = [client.post("/judge", files={"image": jpg()}, headers={"x-forwarded-for": "1.2.3.4"}).status_code for _ in range(3)]
+res_list = [client.post("/judge", files={"image": jpg()},
+                       headers={"x-forwarded-for": "1.2.3.4", "origin": "http://localhost:5173"}) for _ in range(3)]
+codes = [r.status_code for r in res_list]
+# 429에도 CORS 헤더가 있어야 브라우저가 안내 문구를 보여 줌 (없으면 'CORS 오류'로만 보임)
+cors_on_429 = res_list[2].headers.get("access-control-allow-origin") == "http://localhost:5173"
 other = client.post("/judge", files={"image": jpg()}, headers={"x-forwarded-for": "5.6.7.8"}).status_code
-ok = codes == [200, 200, 429] and other == 200
+ok = codes == [200, 200, 429] and other == 200 and cors_on_429
 failed += not ok
-print("O" if ok else "X", "요청 수 제한 → 같은 IP 3번째는 429, 다른 IP는 통과 →", codes, other)
+print("O" if ok else "X", "요청 수 제한 → 같은 IP 3번째는 429(CORS 헤더 포함), 다른 IP는 통과 →", codes, other, cors_on_429)
 server.RATE_LIMIT_PER_MIN = 0
 
 # 본문 크기를 받기 전에 확인 (Content-Length가 너무 크면 바로 413)

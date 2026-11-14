@@ -80,7 +80,8 @@ function App() {
   function handleAnswer(key, value) {
     const next = { ...answers, [key]: value };
     setAnswers(next);
-    runJudge(next, result?.observation ?? null);
+    // 품목을 직접 고른 경우엔 그 품목 기준으로 사진을 다시 봐야 하므로 AI를 다시 부른다
+    runJudge(next, key === "item_hint" ? null : result?.observation ?? null);
   }
 
   // countsAsAttempt: 처리 후 재촬영이면 true, 다른 물건을 찍어서 다시 찍는 거면 false
