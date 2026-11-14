@@ -38,6 +38,13 @@ class Option(BaseModel):
     value: str                      # 눌렀을 때 보낼 값
 
 
+class Place(BaseModel):
+    """배출 장소 안내 (예: 플라스틱류 → 아파트는 어디, 주택은 어디)"""
+    model_config = ConfigDict(extra="forbid")
+    title: str
+    where: List[str]
+
+
 class Condition(BaseModel):
     """조건표 한 줄 (C01, C02 ...)"""
     model_config = ConfigDict(extra="forbid")   # 모르는 키(오타)가 있으면 오류
@@ -50,6 +57,7 @@ class Condition(BaseModel):
     to: Optional[str] = None                    # 분기: 다른 품목ID로 전환
     to_disposal: Optional[str] = None           # 분기: 배출처만 바뀌고 끝
     to_message: Optional[str] = None
+    to_places: List[str] = []                   # 분기 시 배출 장소 (places의 키)
 
     @model_validator(mode="after")
     def _check(self):
@@ -80,6 +88,7 @@ class SplitCase(BaseModel):
     when: List[str]
     disposal: str
     message: str
+    places: List[str] = []
 
 
 class Split(BaseModel):
@@ -113,7 +122,9 @@ class Rule(BaseModel):
     name: str
     type: Literal["state", "info"]
     ai_hint: str                                # AI 프롬프트에 들어갈 품목 설명 (영어)
-    disposal: str                               # 통과 시 배출처
+    disposal: str                               # 통과 시 배출처 (한 줄 요약)
+    how: List[str] = []                         # 버리는 순서 (통과 화면에 번호로)
+    places: List[str] = []                      # 어디에 버리는지 (places의 키)
     source: str                                 # 출처ID (S01 ...)
     warnings: List[str] = []                    # 주의사항 (항상 표시)
     # 상태 판정형
@@ -122,6 +133,7 @@ class Rule(BaseModel):
     checkbox_action: Optional[str] = None       # 체크하지 않았을 때 할 일
     fallback_disposal: Optional[str] = None     # 재촬영 한도 초과 시
     fallback_message: Optional[str] = None
+    fallback_places: List[str] = []
     # 정보 안내형
     message: Optional[str] = None
     split: Optional[Split] = None
@@ -162,6 +174,7 @@ class RuleSet(BaseModel):
     version: str
     messages: Dict[str, str]                    # 화면 문구. 기획팀이 파이썬 없이 고칠 수 있게
     field_labels: Dict[str, str]                # AI 출력 키의 한국어 이름 (재촬영 이유 안내용)
+    places: Dict[str, Place]                    # 배출 장소 안내 (아파트 / 단독주택)
     contamination: Dict[str, Level]             # 오염도 5단계
     items: Dict[str, Rule]
 
@@ -181,9 +194,18 @@ class RuleSet(BaseModel):
         if UNSUPPORTED in self.items:
             raise ValueError(f"'{UNSUPPORTED}'는 '지원 안 함'을 뜻하는 예약 ID예요")
         for item_id, rule in self.items.items():
+            refs = rule.places + rule.fallback_places
             for c in rule.conditions:
                 if c.to and c.to not in self.items:
                     raise ValueError(f"{item_id}.{c.id}: 분기 대상 '{c.to}'가 품목표에 없어요")
+                refs += c.to_places
+            if rule.split:
+                refs += [p for case in rule.split.cases for p in case.places]
+            missing = set(refs) - set(self.places)
+            if missing:
+                raise ValueError(f"{item_id}: places에 없는 배출 장소 {sorted(missing)}")
+            if not rule.places:
+                raise ValueError(f"{item_id}: 배출 장소(places)가 하나 이상 필요해요")
         return self
 
 
@@ -245,6 +267,11 @@ class Question(BaseModel):
     options: List[Option]
 
 
+class PlaceOut(BaseModel):
+    title: str
+    where: List[str]
+
+
 class Judgement(BaseModel):
     status: Literal[STATUSES]
     message: str
@@ -256,6 +283,8 @@ class Judgement(BaseModel):
     retake: List[str] = []
     tips: List[str] = []
     warnings: List[str] = []
+    how: List[str] = []                         # 버리는 순서
+    places: List[PlaceOut] = []                 # 어디에 버리는지
     name: Optional[str] = None
     type: Optional[str] = None
     disposal: Optional[str] = None
