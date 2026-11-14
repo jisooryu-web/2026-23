@@ -14,7 +14,7 @@ import argparse, json, os, statistics, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "..", "backend"))
 
-from judge import RULES, _related, judge
+from judge import RULES, _related, judge, normalize_item
 from schemas import Observation
 from vision import observe_file
 
@@ -30,6 +30,7 @@ def run_once(case):
     raw = observe_file(os.path.join(HERE, case["image"]))
     seconds = time.perf_counter() - started
     obs = Observation.model_validate(raw).model_dump()           # 서버와 같은 검사
+    obs["item"] = normalize_item(obs["item"])                    # "pet_bottle" → "P01" (서버와 같은 변환)
     status = judge(obs, 1, all_yes(obs["item"]))["status"]
     return obs, status, seconds
 

@@ -11,6 +11,7 @@
         "crushed": "true",
         "cap": "closed"
       },
+      "subject": "",
       "notes": "Clear, empty bottle with no label."
     },
     "judgement": {
@@ -58,6 +59,7 @@
         "crushed": "false",
         "cap": "closed"
       },
+      "subject": "",
       "notes": "Blue label wraps a clear bottle with some liquid left."
     },
     "judgement": {
@@ -117,6 +119,7 @@
         "contamination_level": "unknown",
         "stain": "absent"
       },
+      "subject": "",
       "notes": "Interior not visible because of the lid."
     },
     "judgement": {
@@ -171,6 +174,7 @@
         "crushed": "true",
         "cap": "closed"
       },
+      "subject": "",
       "notes": "Clear bottle, no label."
     },
     "judgement": {
@@ -230,6 +234,7 @@
         "contamination_level": "1",
         "stain": "present"
       },
+      "subject": "",
       "notes": "Orange stain remains on the inner wall."
     },
     "judgement": {
@@ -270,6 +275,7 @@
       "confidence": 0.9,
       "same_item": "false",
       "observations": {},
+      "subject": "",
       "notes": "A receipt, not the bottle from the first photo."
     },
     "judgement": {
@@ -293,6 +299,7 @@
       "confidence": 0.8,
       "same_item": "unknown",
       "observations": {},
+      "subject": "",
       "notes": "A metal spoon."
     },
     "judgement": {
@@ -344,6 +351,26 @@
               "value": "P09"
             },
             {
+              "label": "비닐류 (과자·라면 봉지, 포장 비닐)",
+              "value": "P10"
+            },
+            {
+              "label": "종이팩 (우유팩·두유팩)",
+              "value": "P11"
+            },
+            {
+              "label": "종이 박스 (택배 상자)",
+              "value": "P12"
+            },
+            {
+              "label": "일회용 플라스틱 컵",
+              "value": "P13"
+            },
+            {
+              "label": "종이류 (신문·책·노트·종이 상자류)",
+              "value": "P14"
+            },
+            {
               "label": "영수증",
               "value": "I01"
             },
@@ -386,6 +413,110 @@
             {
               "label": "종이컵",
               "value": "I11"
+            },
+            {
+              "label": "물티슈·사용한 휴지",
+              "value": "I12"
+            },
+            {
+              "label": "폐의약품",
+              "value": "I13"
+            },
+            {
+              "label": "비닐랩",
+              "value": "I14"
+            },
+            {
+              "label": "일회용 숟가락·포크",
+              "value": "I15"
+            },
+            {
+              "label": "즉석밥 용기",
+              "value": "I16"
+            },
+            {
+              "label": "보냉 택배 상자 (은박·비닐 안감)",
+              "value": "I17"
+            },
+            {
+              "label": "코팅 종이·전단지·사진·택배 전표",
+              "value": "I18"
+            },
+            {
+              "label": "알루미늄 호일",
+              "value": "I19"
+            },
+            {
+              "label": "플라스틱 장난감·문구",
+              "value": "I20"
+            },
+            {
+              "label": "큰 플라스틱 생활용품 (캐리어·유모차·낚싯대)",
+              "value": "I21"
+            },
+            {
+              "label": "고무장갑·고무호스·식탁보·현수막",
+              "value": "I22"
+            },
+            {
+              "label": "장판·돗자리·천막",
+              "value": "I23"
+            },
+            {
+              "label": "과일 포장망 (완충재)",
+              "value": "I24"
+            },
+            {
+              "label": "헌옷·신발·가방",
+              "value": "I25"
+            },
+            {
+              "label": "이불·쿠션·베개",
+              "value": "I26"
+            },
+            {
+              "label": "음식물이 아닌 음식 쓰레기 (뼈·껍데기·씨·티백)",
+              "value": "I27"
+            },
+            {
+              "label": "커피 찌꺼기·차 찌꺼기",
+              "value": "I28"
+            },
+            {
+              "label": "불연성 쓰레기 (화분 흙·타일·고양이 모래·뚝배기)",
+              "value": "I29"
+            },
+            {
+              "label": "수영복·튜브·구명조끼",
+              "value": "I30"
+            },
+            {
+              "label": "폭죽",
+              "value": "I31"
+            },
+            {
+              "label": "백열전구",
+              "value": "I32"
+            },
+            {
+              "label": "알약 포장재",
+              "value": "I33"
+            },
+            {
+              "label": "걸레·수건",
+              "value": "I34"
+            },
+            {
+              "label": "고철 (공구·철사·못·스테인리스 그릇)",
+              "value": "I35"
+            },
+            {
+              "label": "대형 가전 (냉장고·세탁기·TV·에어컨)",
+              "value": "I36"
+            },
+            {
+              "label": "고무 대야",
+              "value": "I37"
             }
           ]
         }
