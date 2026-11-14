@@ -166,7 +166,7 @@ class Level(BaseModel):
 
 
 STATUSES = ("pass", "need_action", "retake", "question", "fallback", "different_item", "unsupported")
-REQUIRED_MESSAGES = set(STATUSES) | {"not_confirmed", "confirm_question", "same_item_question", "pick_item_question",
+REQUIRED_MESSAGES = set(STATUSES) | {"not_confirmed", "confirm_question", "same_item_question", "pick_item_question", "unsupported_subject",
                                      "checkbox_question", "checkbox_yes", "checkbox_no"}
 
 
