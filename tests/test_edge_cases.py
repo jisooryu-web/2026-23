@@ -25,12 +25,12 @@ RULES_RAW = json.load(open(os.path.join(HERE, "..", "backend", "rules.json"), en
 
 def pet(**obs):
     """투명 페트병 관찰 결과. 기본은 '깨끗한 빈 병', 바꿀 필드만 넘긴다."""
-    base = {"is_transparent": "true", "label_attached": "false", "liquid_inside": "false"}
+    base = {"is_clear": "true", "label": "absent", "liquid": "absent"}
     base.update(obs)
-    return {"item": "pet_bottle", "confidence": 0.9, "observations": base}
+    return {"item": "P01", "confidence": 0.9, "observations": base}
 
 
-YES = {"rinsed": "true"}
+YES = {"checkbox": "true"}
 
 
 def jpg(size=(40, 30)):
@@ -61,31 +61,38 @@ def rules_error(mutate):
         return True
 
 
+P01 = lambda d: d["items"]["P01"]
+C = lambda d, i: P01(d)["conditions"][i]
+
 # (구분, 이름, 실제 결과를 돌려주는 함수, 기대 결과, known)
 cases = [
     # ---------- A. AI가 이상한 값을 줄 때 ----------
     ("AI값", "관찰값이 'yes'처럼 약속 밖 값 → 모르는 것(retake)으로 취급",
-     lambda: judge(pet(label_attached="yes"), 1, YES)["status"], "retake", True),
+     lambda: judge(pet(label="yes"), 1, YES)["status"], "retake", False),
     ("AI값", "관찰값이 대문자 'TRUE' → true로 인정 (투명 병 전용 수거함 안내)",
-     lambda: judge(pet(is_transparent="TRUE"), 1, YES)["disposal"], "투명 페트병 전용 수거함", True),
-    ("AI값", "item이 'PET_BOTTLE'(대문자) → pet_bottle로 인정",
-     lambda: judge({**pet(), "item": "PET_BOTTLE"}, 1, YES)["status"], "pass", True),
+     lambda: judge(pet(is_clear="TRUE"), 1, YES)["disposal"], "투명 페트병 전용 수거함", False),
+    ("AI값", "item이 'p01'(소문자) → P01로 인정",
+     lambda: judge({**pet(), "item": "p01"}, 1, YES)["status"], "pass", False),
+    ("AI값", "오염도가 숫자 3(문자열 아님) → 3단계로 인정",
+     lambda: judge({"item": "P04", "observations": {"contamination_level": 3, "stain": "absent"}}, 1)["status"], "need_action", False),
     ("AI값", "confidence가 1.5(범위 밖) → AI 오류로 처리",
-     lambda: api_code(call_api({**pet(), "confidence": 1.5}, data={"answers": json.dumps(YES)})), "AI_FAILED", True),
-    ("AI값", "same_item이 'True'(약속 밖) → 요청 전체 실패 대신 unknown으로 보고 판정",
-     lambda: api_code(call_api({**pet(), "same_item": "True"}, data={"answers": json.dumps(YES)})), "pass", True),
+     lambda: api_code(call_api({**pet(), "confidence": 1.5}, data={"answers": json.dumps(YES)})), "AI_FAILED", False),
+    ("AI값", "same_item이 'True'(약속 밖) → 요청 전체 실패 대신 정리해서 판정",
+     lambda: api_code(call_api({**pet(), "same_item": "True"}, data={"answers": json.dumps(YES)})), "pass", False),
     ("AI값", "observations 필드가 빠짐 → retake (unknown으로 처리)",
-     lambda: judge({"item": "pet_bottle", "confidence": 0.9}, 1, YES)["status"], "retake", False),
-    ("AI값", "규칙표에 없는 item(glass_bottle) → unsupported",
-     lambda: judge({"item": "glass_bottle", "confidence": 0.9}, 1)["status"], "unsupported", False),
+     lambda: judge({"item": "P01", "confidence": 0.9}, 1, YES)["status"], "retake", False),
+    ("AI값", "규칙표에 없는 item(Z99) → unsupported",
+     lambda: judge({"item": "Z99", "confidence": 0.9}, 1)["status"], "unsupported", False),
     ("AI값", "AI 답이 JSON 객체가 아님(문자열) → AI_FAILED",
      lambda: api_code(call_api("not json")), "AI_FAILED", False),
 
     # ---------- B. 질문 답이 이상할 때 (API를 직접 부르는 경우) ----------
-    ("답변", "답이 선택지 밖 값('yes') → 같은 질문을 다시 해야 함",
-     lambda: judge(pet(), 1, {"rinsed": "yes"})["status"], "question", True),
-    ("답변", "답이 문자열이 아니라 불리언 true → '예'로 인정",
-     lambda: judge(pet(), 1, {"rinsed": True})["status"], "pass", True),
+    ("답변", "체크박스 답이 선택지 밖 값('yes') → 같은 질문을 다시 해야 함",
+     lambda: judge(pet(), 1, {"checkbox": "yes"})["status"], "question", False),
+    ("답변", "답이 문자열이 아니라 불리언 true → '했어요'로 인정",
+     lambda: judge(pet(), 1, {"checkbox": True})["status"], "pass", False),
+    ("답변", "아이스팩 답이 선택지 밖 값('ice') → 다시 질문",
+     lambda: judge({"item": "I05"}, 1, {"ice_content": "ice"})["status"], "question", False),
     ("답변", "answers가 JSON 배열 → BAD_REQUEST",
      lambda: api_code(call_api(pet(), data={"answers": "[1, 2]"})), "BAD_REQUEST", False),
     ("답변", "answers가 null → BAD_REQUEST",
@@ -94,19 +101,18 @@ cases = [
     # ---------- C. 촬영 횟수와 재촬영 흐름 ----------
     ("흐름", "attempt=0 → 1로 보정되어 정상 판정",
      lambda: api_code(call_api(pet(), data={"attempt": "0", "answers": json.dumps(YES)})), "pass", False),
-    ("흐름", "3번째에도 라벨이 안 보임 → fallback",
-     lambda: judge(pet(label_attached="unknown"), MAX_ATTEMPTS, YES)["status"], "fallback", False),
-    ("흐름", "3번째인데 질문이 남아 있음 → 질문 먼저 (fallback 아님)",
-     lambda: judge(pet(label_attached="unknown"), MAX_ATTEMPTS, {})["status"], "question", False),
+    ("흐름", "마지막 촬영에도 라벨이 안 보임 → fallback",
+     lambda: judge(pet(label="unknown"), MAX_ATTEMPTS, YES)["status"], "fallback", False),
+    ("흐름", "마지막 촬영인데 사진은 통과, 체크박스만 남음 → 질문 먼저 (fallback 아님)",
+     lambda: judge(pet(), MAX_ATTEMPTS, {})["status"], "question", False),
     ("흐름", "한도를 넘긴 attempt(10)도 fallback으로 끝남",
-     lambda: judge(pet(label_attached="true"), 10, YES)["status"], "fallback", False),
+     lambda: judge(pet(label="present"), 10, YES)["status"], "fallback", False),
     ("흐름", "prev_item만 있고 prev_image가 없음 → 비교 없이 판정 계속",
-     lambda: api_code(call_api(pet(), data={"attempt": "2", "prev_item": "pet_bottle", "answers": json.dumps(YES)})), "pass", False),
-    ("흐름", "유색 병 + 라벨 → need_action이고 배출처는 플라스틱류로 바뀜",
-     lambda: (lambda r: (r["status"], r["disposal"].startswith("플라스틱류")))(
-         judge(pet(is_transparent="false", label_attached="true"), 1, YES)), ("need_action", True), False),
+     lambda: api_code(call_api(pet(), data={"attempt": "2", "prev_item": "P01", "answers": json.dumps(YES)})), "pass", False),
+    ("흐름", "오염도 5단계는 첫 촬영이어도 바로 종량제봉투",
+     lambda: judge({"item": "P03", "observations": {"contamination_level": "5"}}, 1)["disposal"], "종량제봉투", False),
     ("흐름", "처음 사진과 같은 물건인데 AI가 same_item=false라고 하면 different_item이 반복될 수 있음 → 사용자 확인 필요",
-     lambda: judge({**pet(), "same_item": "false"}, 2, {**YES, "confirm_same_item": "true"}, prev_item="pet_bottle")["status"],
+     lambda: judge({**pet(), "same_item": "false"}, 2, {**YES, "confirm_same_item": "true"}, prev_item="P01")["status"],
      "pass", True),
 
     # ---------- D. 품목 확신도 ----------
@@ -115,10 +121,10 @@ cases = [
     ("확신도", "confidence 0.6 (경계값) → 확인 질문 없이 판정",
      lambda: judge({**pet(), "confidence": 0.6}, 1, YES)["status"], "pass", False),
     ("확신도", "확인 질문에 '예'라고 한 뒤 AI가 다른 품목으로 보면 그 품목으로 다시 확인",
-     lambda: judge({"item": "cup_noodle", "confidence": 0.4, "observations": {}}, 1, {"confirm_pet_bottle": "true"})["questions"][0]["key"],
-     "confirm_cup_noodle", False),
-    ("확신도", "영수증(info)도 확신도가 낮으면 확인 질문",
-     lambda: judge({"item": "receipt", "confidence": 0.3}, 1)["status"], "question", False),
+     lambda: judge({"item": "P04", "confidence": 0.4, "observations": {}}, 1, {"confirm_P01": "true"})["questions"][0]["key"],
+     "confirm_P04", False),
+    ("확신도", "영수증(정보 안내형)도 확신도가 낮으면 확인 질문",
+     lambda: judge({"item": "I01", "confidence": 0.3}, 1)["status"], "question", False),
 
     # ---------- E. 업로드 ----------
     ("업로드", "빈 파일(0바이트) → BAD_IMAGE",
@@ -128,35 +134,43 @@ cases = [
      "TOO_LARGE", False),
     ("업로드", "처음 사진(prev_image)만 깨짐 → 지금 사진으로는 판정 계속",
      lambda: api_code(call_api(pet(), files={"image": jpg(), "prev_image": ("x.jpg", b"broken", "image/jpeg")},
-                               data={"attempt": "2", "prev_item": "pet_bottle", "answers": json.dumps(YES)})), "pass", True),
+                               data={"attempt": "2", "prev_item": "P01", "answers": json.dumps(YES)})), "pass", True),
     ("업로드", "아주 작은 사진(10x10) → AI까지 보내지 말고 다시 찍기 안내",
      lambda: api_code(call_api(pet(), files={"image": jpg((10, 10))}, data={"answers": json.dumps(YES)})), "BAD_IMAGE", True),
 
     # ---------- F. 규칙표(rules.json) 실수 ----------
-    ("규칙표", "관찰 필드명 오타(label_atached) → 서버 시작 전에 잡힘",
-     lambda: rules_error(lambda d: d["items"]["pet_bottle"]["checks"][2].__setitem__("key", "label_atached")), True, False),
+    ("규칙표", "AI 출력 키 오타(lable) → 서버 시작 전에 잡힘",
+     lambda: rules_error(lambda d: C(d, 1).__setitem__("key", "lable")), True, False),
     ("규칙표", "필드 이름 오타(acton) → 잡힘",
-     lambda: rules_error(lambda d: d["items"]["pet_bottle"]["checks"][2].__setitem__("acton", "x")), True, False),
-    ("규칙표", "state 품목에 fallback_disposal 없음 → 잡힘",
-     lambda: rules_error(lambda d: d["items"]["cup_noodle"].pop("fallback_disposal")), True, False),
+     lambda: rules_error(lambda d: C(d, 1).__setitem__("acton", "x")), True, False),
+    ("규칙표", "통과 값이 나올 수 없는 값('yes') → 잡힘",
+     lambda: rules_error(lambda d: C(d, 1).__setitem__("pass", ["yes"])), True, False),
+    ("규칙표", "같은 key의 조건이 두 번 → 잡힘",
+     lambda: rules_error(lambda d: P01(d)["conditions"].append(dict(C(d, 1), id="C99"))), True, False),
+    ("규칙표", "분기 대상 품목이 없음(to: P99) → 잡힘",
+     lambda: rules_error(lambda d: C(d, 0).__setitem__("to", "P99")), True, False),
+    ("규칙표", "상태 판정형에 대체 안내 없음 → 잡힘",
+     lambda: rules_error(lambda d: d["items"]["P04"].pop("fallback_message")), True, False),
+    ("규칙표", "필수 조건에 안내 문구(action) 없음 → 잡힘",
+     lambda: rules_error(lambda d: C(d, 1).pop("action")), True, False),
+    ("규칙표", "오염도 단계가 빠짐 → 잡힘",
+     lambda: rules_error(lambda d: d["contamination"].pop("5")), True, False),
+    ("규칙표", "질문형 split에서 선택지 하나의 결과가 없음 → 잡힘",
+     lambda: rules_error(lambda d: d["items"]["I05"]["split"]["cases"].pop()), True, False),
     ("규칙표", "messages에 상태 문구가 빠짐 → 잡힘",
      lambda: rules_error(lambda d: d["messages"].pop("retake")), True, False),
     ("규칙표", "확인 질문 문구에 {name} 자리가 없음 → 잡힘",
      lambda: rules_error(lambda d: d["messages"].__setitem__("confirm_question", "이 물건 맞나요?")), True, False),
     ("규칙표", "품목에 ai_hint(AI용 설명)가 없음 → 잡힘",
-     lambda: rules_error(lambda d: d["items"]["receipt"].pop("ai_hint")), True, False),
-    ("규칙표", "'unsupported'를 품목 이름으로 씀 → 잡힘",
-     lambda: rules_error(lambda d: d["items"].__setitem__("unsupported", d["items"]["receipt"])), True, False),
-    ("규칙표", "같은 key의 조건이 두 번 → 잡혀야 함",
-     lambda: rules_error(lambda d: d["items"]["pet_bottle"]["checks"].append(dict(d["items"]["pet_bottle"]["checks"][2]))), True, True),
-    ("규칙표", "ok 값이 관찰값으로 나올 수 없는 값('yes') → 잡혀야 함",
-     lambda: rules_error(lambda d: d["items"]["pet_bottle"]["checks"][1].__setitem__("ok", "yes")), True, True),
+     lambda: rules_error(lambda d: d["items"]["I01"].pop("ai_hint")), True, False),
+    ("규칙표", "예약 ID 'X00'을 품목으로 씀 → 잡힘",
+     lambda: rules_error(lambda d: d["items"].__setitem__("X00", d["items"]["I01"])), True, False),
 
     # ---------- G. 파일끼리 맞는지 (품목·필드 동기화) ----------
     ("동기화", "rules.json의 모든 품목이 AI 프롬프트에 있음",
-     lambda: [k for k in RULES_RAW["items"] if k not in vision.SYSTEM_PROMPT], [], False),
-    ("동기화", "schemas.py의 관찰 필드가 모두 AI 프롬프트에 있음",
-     lambda: sorted(f for f in OBSERVATION_FIELDS if f not in vision.SYSTEM_PROMPT), [], False),
+     lambda: [k for k in RULES_RAW["items"] if f'"{k}"' not in vision.SYSTEM_PROMPT], [], False),
+    ("동기화", "AI 출력 키가 모두 AI 프롬프트에 설명돼 있음",
+     lambda: sorted(f for f in OBSERVATION_FIELDS if f"- {f}:" not in vision.SYSTEM_PROMPT), [], False),
     ("동기화", "프론트 Mock(responses.json)이 실제 응답 모양(JudgeResponse)과 같음",
      lambda: [k for k, v in json.load(open(os.path.join(HERE, "..", "frontend", "src", "services", "responses.json"),
                                           encoding="utf-8")).items()
