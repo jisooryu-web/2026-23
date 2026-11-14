@@ -302,7 +302,94 @@
       "attempt": 1,
       "max_attempts": 3,
       "checklist": [],
-      "questions": [],
+      "questions": [
+        {
+          "key": "item_hint",
+          "text": "찍은 물건이 아래 중에 있나요? 고르면 그 품목 기준으로 다시 확인할게요.",
+          "options": [
+            {
+              "label": "투명 페트병",
+              "value": "P01"
+            },
+            {
+              "label": "유색 페트병·일반 플라스틱 용기",
+              "value": "P02"
+            },
+            {
+              "label": "배달 플라스틱 용기",
+              "value": "P03"
+            },
+            {
+              "label": "컵라면 용기",
+              "value": "P04"
+            },
+            {
+              "label": "캔 (음료·식품)",
+              "value": "P05"
+            },
+            {
+              "label": "부탄가스·스프레이 캔",
+              "value": "P06"
+            },
+            {
+              "label": "유리병",
+              "value": "P07"
+            },
+            {
+              "label": "펌프형 용기 (샴푸·세제)",
+              "value": "P08"
+            },
+            {
+              "label": "스티로폼 상자",
+              "value": "P09"
+            },
+            {
+              "label": "영수증",
+              "value": "I01"
+            },
+            {
+              "label": "건전지",
+              "value": "I02"
+            },
+            {
+              "label": "형광등",
+              "value": "I03"
+            },
+            {
+              "label": "우산",
+              "value": "I04"
+            },
+            {
+              "label": "아이스팩",
+              "value": "I05"
+            },
+            {
+              "label": "깨진 유리",
+              "value": "I06"
+            },
+            {
+              "label": "내열·크리스탈 유리, 도자기, 거울",
+              "value": "I07"
+            },
+            {
+              "label": "칫솔·옷걸이·CD",
+              "value": "I08"
+            },
+            {
+              "label": "텀블러",
+              "value": "I09"
+            },
+            {
+              "label": "플라스틱 빨대",
+              "value": "I10"
+            },
+            {
+              "label": "종이컵",
+              "value": "I11"
+            }
+          ]
+        }
+      ],
       "retake": [],
       "tips": [],
       "warnings": [],
