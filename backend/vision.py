@@ -75,8 +75,8 @@ Include ONLY the fields listed for the chosen item. Leave every other field out.
 - is_clear: "true" if the bottle plastic itself is colorless and see-through; "false" if the plastic is tinted
   (green, brown, blue, white...). The color of the liquid or the label does NOT count.
 - label: "present" if a SEPARATE plastic film, paper label or sticker remains on the body, even partially;
-  "absent" if the visible body has no such separate label. Text, logos or patterns printed directly on the plastic, and
-  embossed marks molded into it, are NOT labels. If a large side that could hide a label is not visible, "unknown".
+  "absent" if the visible body has no such separate label. Text, logos or patterns printed directly on the plastic,
+  embossed marks molded into it, and small sticky glue marks left after peeling, are NOT labels. If a large side that could hide a label is not visible, "unknown".
 - liquid: "present" if any liquid or contents are visible inside (a layer at the bottom, foam, residue of the product);
   "absent" if the interior is visibly empty (small water droplets from rinsing count as "absent").
 - crushed: "true" if the container or box is visibly flattened, crushed, or folded flat.
@@ -247,6 +247,30 @@ def observe(image: bytes, prev_image: bytes | None = None, item_hint: str | None
                   {"role": "user", "content": content}],
     )
     return json.loads(res.choices[0].message.content)
+
+
+SAME_PROMPT = """Two photos follow: an earlier photo of an object, then a new photo taken after the user cleaned it
+(e.g. removed a label, emptied or rinsed it). Decide only whether the main object in the new photo is the SAME physical
+object as in the earlier photo. Labels, wraps, contents or dirt being removed does NOT make it a different object.
+Compare shape, size, color of the material, cap, brand print molded or printed on the body, and damage.
+Answer JSON only: {"same_item": "true" | "false" | "unknown"}"""
+
+
+def compare_same(prev_image: bytes, image: bytes) -> str:
+    """Retake check, separate from observe(): asking one call to compare two photos AND describe the current one made the
+    model copy features (e.g. a label) from the BEFORE photo into the current observation. Returns "true"/"false"/"unknown"."""
+    extra = {"temperature": 0} if MODEL.startswith(("gpt-4", "gpt-3")) else {}
+    res = _get_client().chat.completions.create(
+        model=MODEL,
+        response_format={"type": "json_object"},
+        **extra,
+        messages=[{"role": "system", "content": SAME_PROMPT},
+                  {"role": "user", "content": [{"type": "text", "text": "Earlier photo, then new photo."},
+                                               _image_part(prev_image, PREV_IMAGE_DETAIL),
+                                               _image_part(image, PREV_IMAGE_DETAIL)]}],
+    )
+    value = str(json.loads(res.choices[0].message.content).get("same_item", "")).strip().lower()
+    return value if value in ("true", "false") else "unknown"
 
 
 def observe_file(path: str, prev_path: str | None = None) -> dict:

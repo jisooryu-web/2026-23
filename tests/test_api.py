@@ -13,6 +13,7 @@ FAKE = {"item": "P01", "confidence": 0.9, "same_item": "unknown",
         "observations": {"is_clear": "true", "label": "absent", "liquid": "absent"},
         "notes": "fake"}
 server.observe = lambda cur, prev=None: FAKE          # AI 대신 가짜 관찰
+server.compare_same = lambda prev, cur: "unknown"     # 재촬영 비교도 AI 대신
 client = TestClient(server.app)
 
 

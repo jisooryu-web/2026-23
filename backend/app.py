@@ -18,7 +18,9 @@ from fastapi.responses import JSONResponse
 from config import ALLOWED_ORIGINS, HOST, MAX_BYTES, PORT, RATE_LIMIT_PER_MIN
 from judge import MESSAGES, item_options, judge, normalize_item, RULES
 from schemas import ErrorResponse, JudgeResponse, Observation
-from vision import observe, prepare_image
+from concurrent.futures import ThreadPoolExecutor
+
+from vision import compare_same, observe, prepare_image
 
 log = logging.getLogger("uvicorn.error")
 
@@ -99,6 +101,15 @@ def read_upload(f: UploadFile) -> bytes:
     return data
 
 
+def _same_item(prev: bytes, cur: bytes) -> str:
+    """같은 물건 비교는 실패해도 판정을 막지 않는다 (모르면 unknown → 품목이 이어지는지만 본다)"""
+    try:
+        return compare_same(prev, cur)
+    except Exception:
+        log.warning("same-item check failed", exc_info=True)
+        return "unknown"
+
+
 # ---------- API ----------
 
 @app.get("/health")
@@ -152,8 +163,15 @@ def judge_api(
 
         # 사용자가 품목을 직접 고른 경우(인식 실패 화면에서) → AI에게 알려 주고 그 품목으로 확정
         hint = str(answer_dict.get("item_hint") or "").strip().upper() or None
+        # 재촬영이면 '지금 사진 관찰'과 '같은 물건인지 비교'를 따로, 동시에 부른다.
+        # 한 번에 두 장을 주고 관찰까지 시키면, 처음 사진의 라벨을 지금 사진에도 있다고 답하는 일이 있었다.
         try:
-            raw = observe(cur, prev, hint) if hint else observe(cur, prev)
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                same = pool.submit(_same_item, prev, cur) if prev else None
+                raw = observe(cur, None, hint) if hint else observe(cur)
+                same = same.result() if same else "unknown"
+            if isinstance(raw, dict) and same != "unknown":
+                raw["same_item"] = same
             if hint and hint in RULES and isinstance(raw, dict):
                 raw.update(item=hint, confidence=1.0)
             obs = Observation.model_validate(raw).model_dump()
