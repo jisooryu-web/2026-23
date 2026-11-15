@@ -12,7 +12,7 @@ server.RATE_LIMIT_PER_MIN = 0                      # 테스트는 요청이 많�
 FAKE = {"item": "P01", "confidence": 0.9, "same_item": "unknown",
         "observations": {"is_clear": "true", "label": "absent", "liquid": "absent"},
         "notes": "fake"}
-server.observe = lambda cur, prev=None: FAKE          # AI 대신 가짜 관찰
+server.observe = lambda cur, prev=None, hint=None: FAKE          # AI 대신 가짜 관찰
 server.compare_same = lambda prev, cur: "unknown"     # 재촬영 비교도 AI 대신
 client = TestClient(server.app)
 
@@ -21,6 +21,16 @@ def jpg():
     buf = io.BytesIO()
     Image.new("RGB", (40, 30), "white").save(buf, format="JPEG")
     return ("p.jpg", buf.getvalue(), "image/jpeg")
+
+
+def retake(compare, prev_item="P01"):
+    """재촬영 요청. 같은 물건 비교 결과를 compare로 정하고, observe에 넘어간 품목 힌트를 기록한다."""
+    server.compare_same = lambda prev, cur: compare
+    try:
+        return client.post("/judge", files={"image": jpg(), "prev_image": jpg()},
+                           data={"attempt": "2", "prev_item": prev_item, "answers": '{"checkbox": "true"}'})
+    finally:
+        server.compare_same = lambda prev, cur: "unknown"
 
 
 def status_of(res):
@@ -38,8 +48,10 @@ cases = [
     ("attempt가 숫자 아님", lambda: client.post("/judge", files={"image": jpg()}, data={"attempt": "abc"}), 400, "BAD_REQUEST"),
     ("answers가 JSON 아님", lambda: client.post("/judge", files={"image": jpg()}, data={"answers": "{oops"}), 400, "BAD_REQUEST"),
     ("이미지가 아닌 파일", lambda: client.post("/judge", files={"image": ("a.jpg", b"not image", "image/jpeg")}), 400, "BAD_IMAGE"),
-    ("재촬영: 다른 품목", lambda: client.post("/judge", files={"image": jpg(), "prev_image": jpg()},
-                                         data={"attempt": "2", "prev_item": "I01"}), 200, "different_item"),
+    ("재촬영: 다른 물건 (비교 결과 false) → 다른 물건 + 확인 질문",
+     lambda: retake(compare="false"), 200, "different_item"),
+    ("재촬영: AI가 품목을 다르게 봐도 처음 품목으로 고정 → 판정 계속",
+     lambda: retake(compare="unknown", prev_item="I01"), 200, "pass"),
 ]
 
 failed = 0
@@ -50,7 +62,7 @@ for name, call, code, expected in cases:
     print("O" if ok else "X", name, "→", res.status_code, "" if expected is None else status_of(res))
 
 # 응답에 None 값이 섞여 나가지 않는지 (unsupported면 name 등이 아예 빠져야 함)
-server.observe = lambda cur, prev=None: {"item": "X00"}
+server.observe = lambda cur, prev=None, hint=None: {"item": "X00"}
 res = client.post("/judge", files={"image": jpg()})
 ok = res.status_code == 200 and "name" not in res.json()["judgement"]
 failed += not ok
@@ -58,7 +70,7 @@ print("O" if ok else "X", "지원 안 하는 품목은 name 없이 응답 →", 
 
 
 # AI가 품목을 확신하지 못하면 확인 질문
-server.observe = lambda cur, prev=None: {**FAKE, "confidence": 0.3}
+server.observe = lambda cur, prev=None, hint=None: {**FAKE, "confidence": 0.3}
 res = client.post("/judge", files={"image": jpg()})
 q = res.json()["judgement"]["questions"]
 ok = res.status_code == 200 and q and q[0]["key"] == "confirm_P01"
@@ -68,7 +80,7 @@ print("O" if ok else "X", "확신 낮음 → 품목 확인 질문 →", q[0]["te
 
 # 질문에 답할 때 직전 관찰을 보내면 AI를 부르지 않음 (사진도 필요 없음)
 calls = []
-server.observe = lambda cur, prev=None: calls.append(1) or FAKE
+server.observe = lambda cur, prev=None, hint=None: calls.append(1) or FAKE
 res = client.post("/judge", data={"observation": json.dumps(FAKE), "answers": '{"checkbox": "true"}'})
 ok = res.status_code == 200 and status_of(res) == "pass" and not calls
 failed += not ok
@@ -85,7 +97,7 @@ failed += not ok
 print("O" if ok else "X", "AI 실패 →", res.status_code, status_of(res))
 
 # 같은 IP가 1분에 너무 많이 요청하면 429 (AI 비용 보호)
-server.observe = lambda cur, prev=None: FAKE
+server.observe = lambda cur, prev=None, hint=None: FAKE
 server.RATE_LIMIT_PER_MIN = 2
 server._recent.clear()
 res_list = [client.post("/judge", files={"image": jpg()},

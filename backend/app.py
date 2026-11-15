@@ -163,6 +163,11 @@ def judge_api(
 
         # 사용자가 품목을 직접 고른 경우(인식 실패 화면에서) → AI에게 알려 주고 그 품목으로 확정
         hint = str(answer_dict.get("item_hint") or "").strip().upper() or None
+        # 재촬영이면 품목은 처음 판정 그대로 두고 상태만 새로 본다.
+        # 매번 품목을 새로 인식하면 같은 물건인데도 품목이 바뀌어(배달 용기 ↔ 컵라면 용기) '다른 물건'으로 끝나는 일이 있었다.
+        # 다른 물건인지는 아래의 같은 물건 비교와 사용자 확인으로만 판단한다.
+        if not hint and prev and prev_item and prev_item.strip().upper() in RULES:
+            hint = prev_item.strip().upper()
         # 재촬영이면 '지금 사진 관찰'과 '같은 물건인지 비교'를 따로, 동시에 부른다.
         # 한 번에 두 장을 주고 관찰까지 시키면, 처음 사진의 라벨을 지금 사진에도 있다고 답하는 일이 있었다.
         try:
@@ -184,7 +189,7 @@ def judge_api(
     # 요청마다 한 줄 기록 (사진·개인정보 없음). 실제 사용 중 정확도·속도를 볼 수 있다
     log.info("judge %s", json.dumps({
         "status": result["status"], "item": obs["item"], "confidence": obs["confidence"],
-        "attempt": attempt, "reused": observation is not None, "subject": obs.get("subject", ""), "notes": (obs.get("notes") or "")[:150],
+        "attempt": attempt, "reused": observation is not None, "same": obs.get("same_item"), "subject": obs.get("subject", ""), "notes": (obs.get("notes") or "")[:150],
         "ms": round((time.perf_counter() - started) * 1000),
     }, ensure_ascii=False))
     return {"observation": obs, "judgement": result}
