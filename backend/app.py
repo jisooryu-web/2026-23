@@ -175,6 +175,8 @@ def judge_api(
                 same = pool.submit(_same_item, prev, cur) if prev else None
                 raw = observe(cur, None, hint) if hint else observe(cur)
                 same = same.result() if same else "unknown"
+            if isinstance(raw, dict):
+                raw = dict(raw)                         # 받은 결과를 직접 고치지 않고 복사해서 쓴다
             if isinstance(raw, dict) and same != "unknown":
                 raw["same_item"] = same
             if hint and hint in RULES and isinstance(raw, dict):
