@@ -103,6 +103,19 @@ body {
   cursor: not-allowed;
 }
 
+/* 갤러리에서 고르기: 촬영 버튼보다 한 단계 약하게 */
+.upload-button.gallery-button {
+  margin-top: 0;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border-color: var(--border);
+}
+
+.upload-button.gallery-button:hover {
+  background: var(--primary-light);
+  filter: brightness(0.96);
+}
+
 /* 파일 선택 버튼 숨기기 */
 .upload-button input[type="file"] {
   display: none;
