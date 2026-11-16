@@ -256,6 +256,19 @@ return (
           />
         </label>
 
+        {/* 갤러리에 있는 사진으로 판정 (capture가 없으면 폰에서 사진 보관함을 고를 수 있음) */}
+        <label className="upload-button gallery-button">
+          <span className="upload-icon material-symbols-outlined">
+            photo_library
+          </span>
+          갤러리에서 고르기
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+          />
+        </label>
+
           {!file && error && (
             <p className="error">{error}</p>
           )}
