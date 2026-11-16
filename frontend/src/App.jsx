@@ -250,8 +250,7 @@ return (
 
           <input
             type="file"
-            accept="image/*"
-            capture="environment"
+            accept="image/*, heic,.heif"
             onChange={handleFileChange}
           />
         </label>
