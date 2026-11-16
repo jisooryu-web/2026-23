@@ -3,6 +3,39 @@ import ItemPicker from "./ItemPicker";
 import { getItems } from "../services/judgeApi";
 
 // 상태별 화면. 백엔드 judgement.status 와 1:1 대응
+// 판정 근거 화면: 관찰 키의 한국어 이름은 서버가 rules.json(field_labels)에서 보내 준 labels를 먼저 쓰고,
+// labels가 없는 예전 응답·Mock일 때만 아래 이름을 씀
+const FALLBACK_LABELS = {
+  contamination_level: "오염도",
+  stain: "착색 흔적",
+  other_material: "다른 재질",
+  label: "라벨",
+  liquid: "내용물",
+  cap: "뚜껑",
+  crushed: "압축 여부",
+  is_clear: "투명 여부",
+  general_class: "일반 분류",
+};
+
+const VALUE_NAMES = {
+  present: "있음",
+  absent: "없음",
+  true: "예",
+  false: "아니요",
+  unknown: "확인 어려움",
+  closed: "닫혀 있음",
+  long: "장우산",
+  folding: "접이식 우산",
+  general: "일반쓰레기",
+  non_combustible: "불연성 쓰레기",
+  large: "대형 폐기물",
+  electronic: "전자제품",
+};
+
+function fieldName(labels, key) {
+  return (labels && labels[key]) || FALLBACK_LABELS[key] || key;
+}
+
 function JudgeResult({ result, loading, onRetake, onAnswer, onRestart, onCorrect }) {
   const [checked, setChecked] = useState({});
   // "품목이 달라요": AI가 품목을 잘못 봤을 때 검색해서 고르면 그 품목 기준으로 다시 판정
@@ -186,42 +219,14 @@ function JudgeResult({ result, loading, onRetake, onAnswer, onRestart, onCorrect
         <details className="evidence">
           <summary>판정 근거 보기</summary>
           <div className="evidence-content">
-  <h4>AI 관찰 데이터</h4>
-
-  {Object.entries(
-    result.observation.observations || {}
-  ).map(([key, value]) => {
-    const labels = {
-      contamination_level: "오염도",
-      stain: "착색 흔적",
-      other_material: "다른 재질",
-      label: "라벨",
-      liquid: "내용물",
-      cap: "뚜껑",
-      crushed: "압축 여부",
-      is_clear: "투명 여부",
-      general_class: "일반 분류",
-    };
-
-    const values = {
-      present: "있음",
-      absent: "없음",
-      true: "예",
-      false: "아니요",
-      unknown: "확인 어려움",
-      general: "일반 분류",
-    };
-
-    return (
-      <p key={key}>
-        <strong>{labels[key] || key}: </strong>
-        {key === "contamination_level"
-          ? `${value}단계`
-          : values[String(value)] || String(value)}
-      </p>
-    );
-  })}
-</div>
+            <h4>AI 관찰 데이터</h4>
+            {Object.entries(result.observation.observations || {}).map(([key, value]) => (
+              <p key={key}>
+                <strong>{fieldName(result.labels, key)}: </strong>
+                {key === "contamination_level" ? `${value}단계` : VALUE_NAMES[String(value)] || String(value)}
+              </p>
+            ))}
+          </div>
           {j.source && <p>기준 출처: {j.source}</p>}
         </details>
       )}

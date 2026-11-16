@@ -332,6 +332,7 @@ class Judgement(BaseModel):
 class JudgeResponse(BaseModel):
     observation: Observation
     judgement: Judgement
+    labels: Dict[str, str] = {}                 # 관찰 키의 한국어 이름 (rules.json field_labels, 판정 근거 화면용)
 
 
 class ErrorBody(BaseModel):

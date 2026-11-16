@@ -82,9 +82,10 @@ print("O" if ok else "X", "확신 낮음 → 품목 확인 질문 →", q[0]["te
 calls = []
 server.observe = lambda cur, prev=None, hint=None: calls.append(1) or FAKE
 res = client.post("/judge", data={"observation": json.dumps(FAKE), "answers": '{"checkbox": "true"}'})
-ok = res.status_code == 200 and status_of(res) == "pass" and not calls
+labels = res.json().get("labels", {})
+ok = res.status_code == 200 and status_of(res) == "pass" and not calls and set(labels) == set(FAKE["observations"])
 failed += not ok
-print("O" if ok else "X", "관찰 재사용 → AI 호출 없이 판정 →", status_of(res), "/ AI 호출", len(calls), "회")
+print("O" if ok else "X", "관찰 재사용 → AI 호출 없이 판정 →", status_of(res), "/ AI 호출", len(calls), "회 / 항목 이름", labels.get("label"))
 
 
 # AI가 실패하면 502
