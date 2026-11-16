@@ -8,6 +8,7 @@ cases.json 한 줄 = 사진 하나와 정답
   {"image": "images/p01_label.jpg",
    "expected": {"item": "P01", "label": "present"},   # 사람이 확인한 관찰 정답 (모르는 필드는 안 적어도 됨)
    "expected_status": "need_action"}                   # 질문에 모두 '예/했어요'라고 했을 때 최종 판정
+                                                       # 둘 다 맞는 경우는 목록으로: ["retake", "need_action"]
 """
 import argparse, json, os, statistics, sys, time
 
@@ -79,10 +80,12 @@ def main():
                     n["wrong"] += 1           # 틀리게 단정 → 잘못된 안내. 0에 가깝게 만드는 게 목표
                     wrong_fields.append(f"{case['image']}  {key}: 정답 {want} / AI {got}")
             if "expected_status" in case:
+                want = case["expected_status"]
+                want = want if isinstance(want, list) else [want]
                 n["status_total"] += 1
-                n["status_ok"] += status == case["expected_status"]
+                n["status_ok"] += status in want
                 # 가장 나쁜 오류: 처리가 필요한데 '통과'라고 안내 (판정 원칙 2)
-                n["wrong_pass"] += status == "pass" and case["expected_status"] != "pass"
+                n["wrong_pass"] += status == "pass" and "pass" not in want
             rows.append({"image": case["image"], "item": obs["item"], "confidence": obs["confidence"],
                          "status": status, "expected_status": case.get("expected_status"),
                          "seconds": round(seconds, 2), "notes": obs["notes"]})
@@ -108,7 +111,9 @@ def main():
         if "error" in r:
             print(f"  {r['image']}  오류 {r['error']}")
         else:
-            mark = "" if r["expected_status"] in (None, r["status"]) else f"  (정답 {r['expected_status']})"
+            want = r["expected_status"]
+            ok = want is None or r["status"] in (want if isinstance(want, list) else [want])
+            mark = "" if ok else f"  (정답 {want})"
             print(f"  {r['image']}  {r['item']}({r['confidence']})  {r['status']}{mark}  {r['seconds']}초")
 
     if args.save:

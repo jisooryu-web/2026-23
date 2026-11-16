@@ -28,6 +28,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
 
+  background-color: #F2F7EF;   /* 배경 그림이 끝나는 아래쪽이 하얗게 비지 않게 */
   background-image: url('./image/background.webp');
   background-size: cover;
   background-position: center;

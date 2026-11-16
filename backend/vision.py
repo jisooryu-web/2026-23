@@ -251,8 +251,12 @@ def observe(image: bytes, prev_image: bytes | None = None, item_hint: str | None
 
 SAME_PROMPT = """Two photos follow: an earlier photo of an object, then a new photo taken after the user cleaned it
 (e.g. removed a label, emptied or rinsed it). Decide only whether the main object in the new photo is the SAME physical
-object as in the earlier photo. Labels, wraps, contents or dirt being removed does NOT make it a different object.
-Compare shape, size, color of the material, cap, brand print molded or printed on the body, and damage.
+object as in the earlier photo.
+These changes are expected and do NOT make it a different object: a label, wrap, tape or sticker removed; contents
+emptied; dirt rinsed off; the object crushed or flattened; a different angle, distance, lighting, hand or background.
+Answer "false" only when the new photo clearly shows a different object: a different kind of object (e.g. a bottle vs a
+can), or a clearly different shape, size, material color or cap color.
+If it is the same kind of object and nothing clearly contradicts, answer "true". If you really cannot tell, "unknown".
 Answer JSON only: {"same_item": "true" | "false" | "unknown"}"""
 
 

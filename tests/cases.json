@@ -1,6 +1,7 @@
 [
  {
-  "image": "images/p01_clean_1.jpg",
+  "image": "images/p01_clean.jpg",
+  "desc": "라벨 없는 빈 투명 생수병",
   "expected": {
    "item": "P01",
    "is_clear": "true",
@@ -10,7 +11,19 @@
   "expected_status": "pass"
  },
  {
-  "image": "images/p01_clean_2.jpg",
+  "image": "images/p01_label.jpg",
+  "desc": "라벨이 붙은 빈 투명 생수병",
+  "expected": {
+   "item": "P01",
+   "is_clear": "true",
+   "label": "present",
+   "liquid": "absent"
+  },
+  "expected_status": "need_action"
+ },
+ {
+  "image": "images/p01_glue.jpg",
+  "desc": "라벨을 떼고 접착 자국만 남은 생수병",
   "expected": {
    "item": "P01",
    "is_clear": "true",
@@ -20,108 +33,66 @@
   "expected_status": "pass"
  },
  {
-  "image": "images/p01_clean_cap.jpg",
+  "image": "images/p01_liquid.jpg",
+  "desc": "라벨 없고 음료가 남은 생수병",
   "expected": {
    "item": "P01",
    "is_clear": "true",
    "label": "absent",
-   "liquid": "absent",
-   "cap": "closed"
-  },
-  "expected_status": "pass"
- },
- {
-  "image": "images/p01_label_1.jpg",
-  "expected": {
-   "item": "P01",
-   "is_clear": "true",
-   "label": "present"
-  },
-  "expected_status": "need_action"
- },
- {
-  "image": "images/p01_label_2.jpg",
-  "expected": {
-   "item": "P01",
-   "is_clear": "true",
-   "label": "present"
-  },
-  "expected_status": "need_action"
- },
- {
-  "image": "images/p01_label_half.jpg",
-  "expected": {
-   "item": "P01",
-   "is_clear": "true",
-   "label": "present"
-  },
-  "expected_status": "need_action"
- },
- {
-  "image": "images/p01_liquid_1.jpg",
-  "expected": {
-   "item": "P01",
-   "is_clear": "true",
    "liquid": "present"
   },
   "expected_status": "need_action"
  },
  {
-  "image": "images/p01_liquid_2.jpg",
+  "image": "images/p01_label_hidden.jpg",
+  "desc": "라벨 붙은 병을 라벨 반대쪽 끝(바닥)만 보이게",
   "expected": {
-   "item": "P01",
-   "is_clear": "true",
-   "liquid": "present"
+   "item": "P01"
   },
-  "expected_status": "need_action"
+  "expected_status": "retake"
  },
  {
-  "image": "images/p01_liquid_little.jpg",
+  "image": "images/p02_green.jpg",
+  "desc": "초록색 사이다병 (라벨 없음, 빈 병)",
   "expected": {
-   "item": "P01",
-   "is_clear": "true",
-   "liquid": "present"
-  },
-  "expected_status": "need_action"
- },
- {
-  "image": "images/p02_green_1.jpg",
-  "expected": {
-   "item": "P01",
+   "item": "P02",
    "is_clear": "false",
    "liquid": "absent"
   },
   "expected_status": "pass"
  },
  {
-  "image": "images/p02_green_2.jpg",
+  "image": "images/p02_ketchup.jpg",
+  "desc": "케첩 통 (내용물 조금 남음, 인쇄 글자)",
   "expected": {
-   "item": "P01",
-   "is_clear": "false",
-   "liquid": "absent"
+   "item": "P02",
+   "liquid": "present"
   },
-  "expected_status": "pass"
+  "expected_status": "need_action"
  },
  {
-  "image": "images/p04_clean_styro.jpg",
+  "image": "images/p03_clean.jpg",
+  "desc": "깨끗이 씻은 배달 용기",
   "expected": {
-   "item": "P04",
+   "item": "P03",
    "contamination_level": "1",
-   "stain": "absent"
+   "stain": "absent",
+   "other_material": "absent"
   },
   "expected_status": "pass"
  },
  {
-  "image": "images/p04_clean_paper.jpg",
+  "image": "images/p03_oil.jpg",
+  "desc": "빨간 기름 자국이 밴 배달 용기",
   "expected": {
-   "item": "P04",
-   "contamination_level": "1",
-   "stain": "absent"
+   "item": "P03",
+   "stain": "present"
   },
-  "expected_status": "pass"
+  "expected_status": "need_action"
  },
  {
-  "image": "images/p04_food_1.jpg",
+  "image": "images/p04_soup.jpg",
+  "desc": "면·국물이 남은 컵라면 용기 (위에서)",
   "expected": {
    "item": "P04",
    "contamination_level": "3"
@@ -129,86 +100,180 @@
   "expected_status": "need_action"
  },
  {
-  "image": "images/p04_food_2.jpg",
+  "image": "images/p05_can.jpg",
+  "desc": "빈 음료 캔",
   "expected": {
-   "item": "P04",
-   "contamination_level": "4"
-  },
-  "expected_status": "need_action"
- },
- {
-  "image": "images/p04_stain.jpg",
-  "expected": {
-   "item": "P04",
-   "stain": "present"
-  },
-  "expected_status": "need_action"
- },
- {
-  "image": "images/i06_glass_1.jpg",
-  "expected": {
-   "item": "I06"
+   "item": "P05",
+   "plastic_part": "absent"
   },
   "expected_status": "pass"
  },
  {
-  "image": "images/i06_glass_2.jpg",
-  "expected": {
-   "item": "I06"
-  },
-  "expected_status": "pass"
- },
- {
-  "image": "images/i01_receipt_1.jpg",
-  "expected": {
-   "item": "I01"
-  },
-  "expected_status": "pass"
- },
- {
-  "image": "images/i01_receipt_crumpled.jpg",
-  "expected": {
-   "item": "I01"
-  },
-  "expected_status": "pass"
- },
- {
-  "image": "images/x00_spoon.jpg",
-  "expected": {
-   "item": "X00"
-  },
-  "expected_status": "unsupported"
- },
- {
-  "image": "images/p08_shampoo.jpg",
-  "expected": {
-   "item": "P08",
-   "pump_attached": "true"
-  },
-  "expected_status": "need_action"
- },
- {
-  "image": "images/p07_soju.jpg",
+  "image": "images/p07_soju_cap.jpg",
+  "desc": "뚜껑이 닫힌 빈 소주병",
   "expected": {
    "item": "P07",
-   "cap": "present"
+   "cap": "present",
+   "broken": "false",
+   "foreign_object": "absent"
   },
   "expected_status": "need_action"
  },
  {
-  "image": "images/hard_dark_pet.jpg",
+  "image": "images/p09_tray_wrap.jpg",
+  "desc": "랩과 가격표가 붙은 스티로폼 트레이",
   "expected": {
-   "item": "P01"
+   "item": "P09",
+   "tape_label": "present",
+   "is_white": "true"
   },
-  "expected_status": "retake",
-  "note": "어둡게 찍은 페트병. pass만 아니면 안전"
+  "expected_status": "need_action"
  },
  {
-  "image": "images/hard_blur_cup.jpg",
+  "image": "images/p09_tray_clean.jpg",
+  "desc": "랩을 벗긴 깨끗한 흰 스티로폼 트레이",
+  "expected": {
+   "item": "P09",
+   "is_white": "true",
+   "tape_label": "absent",
+   "contamination_level": "1"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/p10_snack.jpg",
+  "desc": "빈 과자 봉지",
+  "expected": {
+   "item": "P10",
+   "liquid": "absent",
+   "contamination_level": "1"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/p12_box_tape.jpg",
+  "desc": "테이프·송장이 붙은 택배 상자",
+  "expected": {
+   "item": "P12",
+   "tape_label": "present"
+  },
+  "expected_status": "need_action"
+ },
+ {
+  "image": "images/p13_cup_ice.jpg",
+  "desc": "얼음·음료가 남은 테이크아웃 플라스틱 컵",
+  "expected": {
+   "item": "P13",
+   "liquid": "present"
+  },
+  "expected_status": "need_action"
+ },
+ {
+  "image": "images/i07_glass_cup.jpg",
+  "desc": "커피가 든 유리컵",
+  "expected": {
+   "item": "I07"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/i11_paper_cup.jpg",
+  "desc": "빈 종이컵",
+  "expected": {
+   "item": "I11"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/i27_bones.jpg",
+  "desc": "치킨 뼈",
+  "expected": {
+   "item": "I27"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/i33_blister.jpg",
+  "desc": "빈 알약 포장재",
+  "expected": {
+   "item": "I33"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/i01_receipt.jpg",
+  "desc": "영수증",
+  "expected": {
+   "item": "I01"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/i05_icepack.jpg",
+  "desc": "아이스팩",
+  "expected": {
+   "item": "I05"
+  },
+  "expected_status": "question"
+ },
+ {
+  "image": "images/i38_chair.jpg",
+  "desc": "의자",
+  "expected": {
+   "item": "I38"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/i39_glasses.jpg",
+  "desc": "안경",
+  "expected": {
+   "item": "I39"
+  },
+  "expected_status": "question"
+ },
+ {
+  "image": "images/i41_dehumidifier.jpg",
+  "desc": "물이 고인 통형 제습제",
+  "expected": {
+   "item": "I41"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/x00_hairtie.jpg",
+  "desc": "머리끈 (기준표에 없는 물건)",
+  "expected": {
+   "item": "X00",
+   "general_class": "general"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/x00_charger.jpg",
+  "desc": "휴대폰 충전기 (기준표에 없는 전자제품)",
+  "expected": {
+   "item": "X00",
+   "general_class": "electronic"
+  },
+  "expected_status": "pass"
+ },
+ {
+  "image": "images/hard_clutter.jpg",
+  "desc": "책상 위 여러 물건 사이, 손에 든 라벨 붙은 생수병",
+  "expected": {
+   "item": "P01",
+   "is_clear": "true",
+   "label": "present"
+  },
+  "expected_status": "need_action"
+ },
+ {
+  "image": "images/hard_dark.jpg",
+  "desc": "어두운 곳, 옆에서 찍어 안쪽이 안 보이는 컵라면 용기",
   "expected": {
    "item": "P04"
   },
-  "expected_status": "retake",
-  "note": "흔들린 컵라면. pass만 아니면 안전"
+  "expected_status": "retake"
  }
 ]

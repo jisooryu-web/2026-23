@@ -45,7 +45,7 @@ server.compare_same = lambda prev, cur: "unknown"     # 재촬영 비교는 AI �
 
 def call_api(fake_observation, files=None, data=None):
     """AI 대신 fake_observation을 돌려주게 하고 /judge를 호출."""
-    server.observe = lambda cur, prev=None: copy.deepcopy(fake_observation)
+    server.observe = lambda cur, prev=None, hint=None: copy.deepcopy(fake_observation)
     return client.post("/judge", files=files or {"image": jpg()}, data=data or {})
 
 

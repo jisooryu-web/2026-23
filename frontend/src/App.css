@@ -184,9 +184,9 @@ body {
 
 .workspace.has-result {
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  height: min(750px, calc(100vh - 64px));
+  height: min(750px, calc(100vh - 120px));
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   align-items: center;
 }
 
@@ -265,8 +265,8 @@ body {
 
 .judgement-panel {
   width: 100%;
-  height: fit-content;
-  max-height: calc(100vh - 64px);
+  height: auto;
+  max-height: 100%;
 
   min-width: 0;
   min-height: 0;
@@ -428,8 +428,11 @@ body {
 }
 
 .checklist input {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  min-height: 20px;
+  flex: 0 0 20px;
   accent-color: var(--primary);
 }
 
@@ -625,17 +628,18 @@ body {
 
   .judgement-panel {
     height: auto;
+    max-height: none;      /* PC용 최대 높이가 폰에서는 결과를 잘라서 해제 (페이지 전체가 스크롤) */
     overflow: visible;
   }
 
   .result-screen {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 4%;
   }
 
   .upload-card,
   .judgement-panel {
-    padding: 20px 16px;
+    padding: 5% 4%;
   }
 
   .preview {
@@ -645,7 +649,7 @@ body {
 
 @media (max-width: 400px) {
   .upload-area {
-    padding: 24px 18px;
+    padding: 6% 4%;
   }
 
   .upload-title h2 {
@@ -653,11 +657,11 @@ body {
   }
 
   .judgement-panel {
-    padding: 16px;
+    padding: 4%;
   }
 
   .result-card {
-    padding: 15px;
+    padding: 4%;
   }
 }
 /* 판정 중 표시 */
@@ -690,3 +694,4 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+

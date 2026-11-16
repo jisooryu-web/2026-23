@@ -1,0 +1,833 @@
+{
+  "summary": {
+    "item_ok": 82,
+    "status_ok": 77,
+    "status_total": 90,
+    "wrong_pass": 2,
+    "correct": 91,
+    "cautious": 8,
+    "wrong": 12,
+    "errors": 0,
+    "runs": 90
+  },
+  "unstable": [
+    "images/p01_label_hidden.jpg",
+    "images/p03_clean.jpg",
+    "images/p03_oil.jpg",
+    "images/p07_soju_cap.jpg",
+    "images/p13_cup_ice.jpg",
+    "images/hard_clutter.jpg"
+  ],
+  "rows": [
+    {
+      "image": "images/p01_clean.jpg",
+      "item": "P01",
+      "confidence": 0.96,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 3.25,
+      "notes": "A clear drink bottle has no visible label or liquid, is not crushed, and has its cap on."
+    },
+    {
+      "image": "images/p01_clean.jpg",
+      "item": "P01",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.8,
+      "notes": "A clear, empty plastic drink bottle with no label and its cap screwed on."
+    },
+    {
+      "image": "images/p01_clean.jpg",
+      "item": "P01",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 3.99,
+      "notes": "A clear, uncrushed drink bottle with its cap on and no visible label or liquid."
+    },
+    {
+      "image": "images/p01_label.jpg",
+      "item": "P01",
+      "confidence": 0.97,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 4.3,
+      "notes": "A clear drink bottle with a label and closed cap; no liquid is visible inside."
+    },
+    {
+      "image": "images/p01_label.jpg",
+      "item": "P01",
+      "confidence": 0.97,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 2.76,
+      "notes": "A clear plastic water bottle with a label and closed cap; no liquid is visible."
+    },
+    {
+      "image": "images/p01_label.jpg",
+      "item": "P01",
+      "confidence": 0.98,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.24,
+      "notes": "A clear drink bottle with a separate printed label and cap attached; no liquid is visible."
+    },
+    {
+      "image": "images/p01_glue.jpg",
+      "item": "P01",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.28,
+      "notes": "A clear, uncapped-looking but closed bottle has no visible label or liquid inside."
+    },
+    {
+      "image": "images/p01_glue.jpg",
+      "item": "P01",
+      "confidence": 0.97,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.47,
+      "notes": "A clear, uncapped? No, blue cap is screwed on; the bottle has no visible label and appears empty."
+    },
+    {
+      "image": "images/p01_glue.jpg",
+      "item": "P01",
+      "confidence": 0.97,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.46,
+      "notes": "A clear plastic drink bottle has a blue cap, no separate label, and only visible droplets inside."
+    },
+    {
+      "image": "images/p01_liquid.jpg",
+      "item": "P01",
+      "confidence": 0.96,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.68,
+      "notes": "A clear PET drink bottle with visible water, no separate label, and a green cap screwed on."
+    },
+    {
+      "image": "images/p01_liquid.jpg",
+      "item": "P01",
+      "confidence": 0.96,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 4.0,
+      "notes": "A clear PET bottle has a green screw cap and visible liquid inside, with no separate label."
+    },
+    {
+      "image": "images/p01_liquid.jpg",
+      "item": "P01",
+      "confidence": 0.97,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.99,
+      "notes": "A clear PET bottle with visible liquid inside, a green cap, and no separate label."
+    },
+    {
+      "image": "images/p01_label_hidden.jpg",
+      "item": "P01",
+      "confidence": 0.86,
+      "status": "retake",
+      "expected_status": "retake",
+      "seconds": 6.28,
+      "notes": "The clear molded base of a drink bottle is visible, with no liquid apparent; the bottle body and cap are not shown."
+    },
+    {
+      "image": "images/p01_label_hidden.jpg",
+      "item": "P01",
+      "confidence": 0.82,
+      "status": "need_action",
+      "expected_status": "retake",
+      "seconds": 3.86,
+      "notes": "The clear molded base of a PET drink bottle is visible, but the body, interior, and cap are not shown."
+    },
+    {
+      "image": "images/p01_label_hidden.jpg",
+      "item": "P01",
+      "confidence": 0.55,
+      "status": "need_action",
+      "expected_status": "retake",
+      "seconds": 6.14,
+      "notes": "A clear plastic bottle base is visible, but the bottle body and its contents are not."
+    },
+    {
+      "image": "images/p02_green.jpg",
+      "item": "P07",
+      "confidence": 0.97,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 3.69,
+      "notes": "A green glass bottle with an uncovered neck; no breakage or foreign object is visible."
+    },
+    {
+      "image": "images/p02_green.jpg",
+      "item": "P07",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.76,
+      "notes": "A tall green glass bottle with an open, uncapped neck; no foreign object is visible inside."
+    },
+    {
+      "image": "images/p02_green.jpg",
+      "item": "P07",
+      "confidence": 0.97,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 3.31,
+      "notes": "A tall green glass bottle with an intact body and no cap visible."
+    },
+    {
+      "image": "images/p02_ketchup.jpg",
+      "item": "P02",
+      "confidence": 0.91,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.09,
+      "notes": "A clear rigid plastic squeeze bottle has a yellow cap and visible reddish-brown sauce residue inside."
+    },
+    {
+      "image": "images/p02_ketchup.jpg",
+      "item": "P02",
+      "confidence": 0.95,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 2.98,
+      "notes": "A rigid squeeze bottle has visible reddish sauce residue inside and a yellow cap."
+    },
+    {
+      "image": "images/p02_ketchup.jpg",
+      "item": "P02",
+      "confidence": 0.95,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 2.37,
+      "notes": "A rigid plastic squeeze bottle has visible red sauce residue inside and a yellow cap."
+    },
+    {
+      "image": "images/p03_clean.jpg",
+      "item": "P03",
+      "confidence": 0.84,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 5.76,
+      "notes": "A white molded takeout bowl with a clear lid behind it; only small residue marks are visible inside."
+    },
+    {
+      "image": "images/p03_clean.jpg",
+      "item": "P03",
+      "confidence": 0.87,
+      "status": "need_action",
+      "expected_status": "pass",
+      "seconds": 4.6,
+      "notes": "A white plastic food container with a matching lid has a few faint residue marks and no attached material."
+    },
+    {
+      "image": "images/p03_clean.jpg",
+      "item": "P03",
+      "confidence": 0.89,
+      "status": "need_action",
+      "expected_status": "pass",
+      "seconds": 5.54,
+      "notes": "A white molded plastic food container with a few small residue marks and no attached different material."
+    },
+    {
+      "image": "images/p03_oil.jpg",
+      "item": "P04",
+      "confidence": 0.84,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.99,
+      "notes": "An empty ribbed cup-noodle container has thin orange residue and staining inside."
+    },
+    {
+      "image": "images/p03_oil.jpg",
+      "item": "P03",
+      "confidence": 0.76,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 5.53,
+      "notes": "A round plastic food container has thin orange residue streaks inside and no visible attached material."
+    },
+    {
+      "image": "images/p03_oil.jpg",
+      "item": "P04",
+      "confidence": 0.87,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.69,
+      "notes": "An empty molded cup-noodle container has thin orange residue marks on its inner surface."
+    },
+    {
+      "image": "images/p04_soup.jpg",
+      "item": "P04",
+      "confidence": 0.98,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.99,
+      "notes": "The open cup noodle container holds many noodles and broth, with orange-brown tinting on the inner wall."
+    },
+    {
+      "image": "images/p04_soup.jpg",
+      "item": "P04",
+      "confidence": 0.95,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 4.61,
+      "notes": "A cup-noodle container holds many visible noodles and broth, with an orange tint on the inner surface."
+    },
+    {
+      "image": "images/p04_soup.jpg",
+      "item": "P04",
+      "confidence": 0.98,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.08,
+      "notes": "An open cup noodle container visibly holds noodles and broth, with orange staining on the inner wall."
+    },
+    {
+      "image": "images/p05_can.jpg",
+      "item": "P05",
+      "confidence": 0.99,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.45,
+      "notes": "A pink grapefruit drink metal can with an intact pull-tab top and no visible plastic parts."
+    },
+    {
+      "image": "images/p05_can.jpg",
+      "item": "P05",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.45,
+      "notes": "A pink-labeled metal beverage can with a metal pull tab; it is not crushed."
+    },
+    {
+      "image": "images/p05_can.jpg",
+      "item": "P05",
+      "confidence": 0.99,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.16,
+      "notes": "A pink aluminum beverage can with an intact metal pull tab; no plastic part is visible."
+    },
+    {
+      "image": "images/p07_soju_cap.jpg",
+      "item": "P07",
+      "confidence": 0.96,
+      "status": "pass",
+      "expected_status": "need_action",
+      "seconds": 4.92,
+      "notes": "A green glass bottle with a paper label is held in the foreground; its open neck is visible."
+    },
+    {
+      "image": "images/p07_soju_cap.jpg",
+      "item": "P07",
+      "confidence": 0.96,
+      "status": "pass",
+      "expected_status": "need_action",
+      "seconds": 2.76,
+      "notes": "A green glass beverage bottle is held in the foreground; it has a label and an open, visibly empty neck."
+    },
+    {
+      "image": "images/p07_soju_cap.jpg",
+      "item": "P07",
+      "confidence": 0.94,
+      "status": "retake",
+      "expected_status": "need_action",
+      "seconds": 3.99,
+      "notes": "A green glass beverage bottle is held in the foreground; its neck opening is cut off by the image edge."
+    },
+    {
+      "image": "images/p09_tray_wrap.jpg",
+      "item": "P09",
+      "confidence": 0.96,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.69,
+      "notes": "A white foam tray is covered with clear wrap and a price label, with a few small red residue marks visible."
+    },
+    {
+      "image": "images/p09_tray_wrap.jpg",
+      "item": "P09",
+      "confidence": 0.95,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 2.47,
+      "notes": "A white foam tray is covered with clear plastic wrap and a price sticker, with a few red marks visible."
+    },
+    {
+      "image": "images/p09_tray_wrap.jpg",
+      "item": "P09",
+      "confidence": 0.94,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 4.6,
+      "notes": "A white foam tray remains covered with clear plastic wrap and a sticker, with a few red marks visible."
+    },
+    {
+      "image": "images/p09_tray_clean.jpg",
+      "item": "P09",
+      "confidence": 0.95,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 3.38,
+      "notes": "A white foam tray has a few droplets and tiny red marks on its visible surface."
+    },
+    {
+      "image": "images/p09_tray_clean.jpg",
+      "item": "P09",
+      "confidence": 0.92,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.46,
+      "notes": "A white foam tray has a few small reddish marks and water droplets, with no visible tape or label."
+    },
+    {
+      "image": "images/p09_tray_clean.jpg",
+      "item": "P09",
+      "confidence": 0.94,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 3.04,
+      "notes": "A white foam tray has a few droplets and tiny reddish marks on its surface."
+    },
+    {
+      "image": "images/p10_snack.jpg",
+      "item": "P10",
+      "confidence": 0.78,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 5.25,
+      "notes": "An opened flexible pouch with a shiny dark foil-like lining; no contents or attached hard plastic part are visible."
+    },
+    {
+      "image": "images/p10_snack.jpg",
+      "item": "P10",
+      "confidence": 0.72,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 8.29,
+      "notes": "An open, crinkled reflective film pouch with no visible contents or attached hard plastic part."
+    },
+    {
+      "image": "images/p10_snack.jpg",
+      "item": "P10",
+      "confidence": 0.86,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 4.3,
+      "notes": "An open flexible package with a shiny foil-like inner lining and no visible contents."
+    },
+    {
+      "image": "images/p12_box_tape.jpg",
+      "item": "P12",
+      "confidence": 0.98,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 2.77,
+      "notes": "A corrugated cardboard shipping box with a shipping label and tape; it is damaged at the corner but not flattened."
+    },
+    {
+      "image": "images/p12_box_tape.jpg",
+      "item": "P12",
+      "confidence": 0.98,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 2.76,
+      "notes": "A corrugated cardboard shipping box with a shipping label and tape; it is not flattened."
+    },
+    {
+      "image": "images/p12_box_tape.jpg",
+      "item": "P12",
+      "confidence": 0.98,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 2.76,
+      "notes": "A corrugated cardboard shipping box with a shipping label and tape; it is dented at the corner but not flattened."
+    },
+    {
+      "image": "images/p13_cup_ice.jpg",
+      "item": "P13",
+      "confidence": 0.95,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 4.0,
+      "notes": "Two clear plastic cups contain iced coffee and have plastic lids and straws."
+    },
+    {
+      "image": "images/p13_cup_ice.jpg",
+      "item": "P13",
+      "confidence": 0.95,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.99,
+      "notes": "A clear disposable plastic cup contains a dark drink, ice, and a straw."
+    },
+    {
+      "image": "images/p13_cup_ice.jpg",
+      "item": "P13",
+      "confidence": 0.95,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 3.38,
+      "notes": "A clear disposable plastic cup contains iced coffee and has a straw inserted."
+    },
+    {
+      "image": "images/i07_glass_cup.jpg",
+      "item": "I07",
+      "confidence": 0.97,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 3.07,
+      "notes": "A glossy ceramic cup and saucer containing dark coffee are clearly visible."
+    },
+    {
+      "image": "images/i07_glass_cup.jpg",
+      "item": "I07",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 3.38,
+      "notes": "A glossy ceramic cup containing dark coffee sits on a matching saucer."
+    },
+    {
+      "image": "images/i07_glass_cup.jpg",
+      "item": "I07",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.15,
+      "notes": "A glossy ceramic cup containing dark coffee sits on a matching saucer."
+    },
+    {
+      "image": "images/i11_paper_cup.jpg",
+      "item": "I11",
+      "confidence": 0.95,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.15,
+      "notes": "An opaque paper cup with a rolled rim and a printed face design."
+    },
+    {
+      "image": "images/i11_paper_cup.jpg",
+      "item": "I11",
+      "confidence": 0.97,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.15,
+      "notes": "Opaque matte paper cup with a rolled rim and printed drawing."
+    },
+    {
+      "image": "images/i11_paper_cup.jpg",
+      "item": "I11",
+      "confidence": 0.96,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.46,
+      "notes": "Opaque matte cup with a rolled rim and a printed drawing."
+    },
+    {
+      "image": "images/i27_bones.jpg",
+      "item": "I27",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.46,
+      "notes": "Chicken bones with some meat and breading remain visible."
+    },
+    {
+      "image": "images/i27_bones.jpg",
+      "item": "I27",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.32,
+      "notes": "Chicken bones with attached meat and fried coating are visible."
+    },
+    {
+      "image": "images/i27_bones.jpg",
+      "item": "I27",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.3,
+      "notes": "A chicken bone with meat and crispy coating still attached."
+    },
+    {
+      "image": "images/i33_blister.jpg",
+      "item": "I13",
+      "confidence": 0.97,
+      "status": "question",
+      "expected_status": "pass",
+      "seconds": 2.44,
+      "notes": "A small blister pack containing two visible brown pills."
+    },
+    {
+      "image": "images/i33_blister.jpg",
+      "item": "I13",
+      "confidence": 0.94,
+      "status": "question",
+      "expected_status": "pass",
+      "seconds": 2.66,
+      "notes": "Two brown pills are visible inside the sealed plastic-and-foil blister pack."
+    },
+    {
+      "image": "images/i33_blister.jpg",
+      "item": "I13",
+      "confidence": 0.98,
+      "status": "question",
+      "expected_status": "pass",
+      "seconds": 2.56,
+      "notes": "Two brown pills are visible inside a small blister pack."
+    },
+    {
+      "image": "images/i01_receipt.jpg",
+      "item": "I01",
+      "confidence": 0.99,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.22,
+      "notes": "A printed Korean store receipt with itemized purchases and payment totals."
+    },
+    {
+      "image": "images/i01_receipt.jpg",
+      "item": "I01",
+      "confidence": 0.99,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.12,
+      "notes": "A printed receipt with itemized text and payment details."
+    },
+    {
+      "image": "images/i01_receipt.jpg",
+      "item": "I01",
+      "confidence": 0.99,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.12,
+      "notes": "A narrow paper slip with itemized text and payment details is visible."
+    },
+    {
+      "image": "images/i05_icepack.jpg",
+      "item": "I05",
+      "confidence": 0.99,
+      "status": "question",
+      "expected_status": "question",
+      "seconds": 2.15,
+      "notes": "Two sealed translucent packets labeled as ice packs are visible."
+    },
+    {
+      "image": "images/i05_icepack.jpg",
+      "item": "I05",
+      "confidence": 0.98,
+      "status": "question",
+      "expected_status": "question",
+      "seconds": 2.77,
+      "notes": "Two sealed translucent pouches labeled as ice packs are visible."
+    },
+    {
+      "image": "images/i05_icepack.jpg",
+      "item": "I05",
+      "confidence": 0.99,
+      "status": "question",
+      "expected_status": "question",
+      "seconds": 3.38,
+      "notes": "Two sealed flexible pouches labeled as ice packs are visible."
+    },
+    {
+      "image": "images/i38_chair.jpg",
+      "item": "I38",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 1.84,
+      "notes": "A blue folding chair is prominent in the foreground."
+    },
+    {
+      "image": "images/i38_chair.jpg",
+      "item": "I38",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.15,
+      "notes": "A blue chair with a metal frame and seat is centered in the foreground."
+    },
+    {
+      "image": "images/i38_chair.jpg",
+      "item": "I38",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.15,
+      "notes": "A blue folding chair with a metal frame is prominent in the foreground."
+    },
+    {
+      "image": "images/i39_glasses.jpg",
+      "item": "I39",
+      "confidence": 0.98,
+      "status": "question",
+      "expected_status": "question",
+      "seconds": 2.76,
+      "notes": "Round eyeglasses with dark frames and clear lenses rest on the table."
+    },
+    {
+      "image": "images/i39_glasses.jpg",
+      "item": "I39",
+      "confidence": 0.99,
+      "status": "question",
+      "expected_status": "question",
+      "seconds": 2.47,
+      "notes": "Round black-framed eyeglasses with clear lenses are resting on the table."
+    },
+    {
+      "image": "images/i39_glasses.jpg",
+      "item": "I39",
+      "confidence": 0.98,
+      "status": "question",
+      "expected_status": "question",
+      "seconds": 2.45,
+      "notes": "Round eyeglasses with dark frames and clear lenses are on the table."
+    },
+    {
+      "image": "images/i41_dehumidifier.jpg",
+      "item": "I41",
+      "confidence": 0.94,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 3.38,
+      "notes": "A clear tub with collected liquid and a white grid top, characteristic of a tub-type moisture absorber."
+    },
+    {
+      "image": "images/i41_dehumidifier.jpg",
+      "item": "I41",
+      "confidence": 0.88,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 3.68,
+      "notes": "A clear tub with water collected at the bottom and a white grid top."
+    },
+    {
+      "image": "images/i41_dehumidifier.jpg",
+      "item": "I41",
+      "confidence": 0.91,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.77,
+      "notes": "A clear tub with a white grid top and collected liquid at the bottom."
+    },
+    {
+      "image": "images/x00_hairtie.jpg",
+      "item": "X00",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 1.84,
+      "notes": "Two black fabric-covered elastic hair ties are visible."
+    },
+    {
+      "image": "images/x00_hairtie.jpg",
+      "item": "X00",
+      "confidence": 0.96,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.17,
+      "notes": "Two black fabric-covered elastic hair ties are visible."
+    },
+    {
+      "image": "images/x00_hairtie.jpg",
+      "item": "X00",
+      "confidence": 0.96,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.43,
+      "notes": "Two black fabric-covered hair ties are visible; neither is a listed category."
+    },
+    {
+      "image": "images/x00_charger.jpg",
+      "item": "X00",
+      "confidence": 0.99,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.14,
+      "notes": "A plug-in charging adapter with an attached cable is visible."
+    },
+    {
+      "image": "images/x00_charger.jpg",
+      "item": "X00",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.16,
+      "notes": "A plugged-in wall charger adapter with a coiled cable is visible."
+    },
+    {
+      "image": "images/x00_charger.jpg",
+      "item": "X00",
+      "confidence": 0.98,
+      "status": "pass",
+      "expected_status": "pass",
+      "seconds": 2.76,
+      "notes": "A plug-in charging adapter with attached cable is visible."
+    },
+    {
+      "image": "images/hard_clutter.jpg",
+      "item": "P01",
+      "confidence": 0.98,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 6.45,
+      "notes": "A clear drink bottle with a separate blue-green label and a screw cap; the contents at the bottom are ambiguous."
+    },
+    {
+      "image": "images/hard_clutter.jpg",
+      "item": "P01",
+      "confidence": 0.98,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 4.61,
+      "notes": "A clear plastic water bottle has a label and a closed cap; its contents are not clearly visible."
+    },
+    {
+      "image": "images/hard_clutter.jpg",
+      "item": "P01",
+      "confidence": 0.98,
+      "status": "need_action",
+      "expected_status": "need_action",
+      "seconds": 5.22,
+      "notes": "A clear, capped water bottle with a wraparound label and visible water inside."
+    },
+    {
+      "image": "images/hard_dark.jpg",
+      "item": "P04",
+      "confidence": 0.98,
+      "status": "need_action",
+      "expected_status": "retake",
+      "seconds": 4.12,
+      "notes": "A black instant noodle cup is held from the side, and its interior is not visible."
+    },
+    {
+      "image": "images/hard_dark.jpg",
+      "item": "P04",
+      "confidence": 0.96,
+      "status": "need_action",
+      "expected_status": "retake",
+      "seconds": 2.64,
+      "notes": "A printed instant noodle cup is held at the center; its interior is not visible."
+    },
+    {
+      "image": "images/hard_dark.jpg",
+      "item": "P04",
+      "confidence": 0.95,
+      "status": "need_action",
+      "expected_status": "retake",
+      "seconds": 3.38,
+      "notes": "A printed instant noodle cup is held from the side, with its interior not visible."
+    }
+  ]
+}
