@@ -16,7 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from config import ALLOWED_ORIGINS, HOST, MAX_BYTES, PORT, RATE_LIMIT_PER_MIN
-from judge import MESSAGES, item_options, judge, normalize_item, RULES
+from judge import LABELS, MESSAGES, item_options, judge, normalize_item, RULES
 from schemas import ErrorResponse, JudgeResponse, Observation
 from concurrent.futures import ThreadPoolExecutor
 
@@ -194,7 +194,8 @@ def judge_api(
         "attempt": attempt, "reused": observation is not None, "same": obs.get("same_item"), "subject": obs.get("subject", ""), "notes": (obs.get("notes") or "")[:150],
         "ms": round((time.perf_counter() - started) * 1000),
     }, ensure_ascii=False))
-    return {"observation": obs, "judgement": result}
+    labels = {k: LABELS[k] for k in obs.get("observations") or {} if k in LABELS}
+    return {"observation": obs, "judgement": result, "labels": labels}
 
 
 if __name__ == "__main__":                              # python app.py 로도 실행 가능 (개발용, 코드 바꾸면 자동 재시작)

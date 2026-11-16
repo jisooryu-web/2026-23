@@ -54,6 +54,7 @@
 ```
 
 - `observation`: AI가 사진에서 본 것 (판정 근거 표시용)
+- `labels`: `observation.observations`에 있는 키의 한국어 이름 (예: `{"label": "라벨"}`). 판정 근거 화면에서 키 대신 보여 줌
 - `judgement`: 판정기준표(`rules.json`)로 내린 판정. **화면은 `judgement.status`로 분기**하고, 문구는 `message`를 그대로 쓰면 된다.
 - `item`: 판정기준표의 품목ID (AI는 `pet_bottle` 같은 영어 이름으로 답하고, 서버가 품목ID로 바꿔서 돌려줌) (P01~P14 상태 판정형, I01~I37 정보 안내형, X00 지원 안 함). 분기가 일어나면 바뀐 품목 (예: 유색 페트병이면 P02)
 - `tips`: 권고 조건 (안 해도 배출 가능). 통과 화면에도 나올 수 있음
