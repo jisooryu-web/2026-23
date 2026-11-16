@@ -212,8 +212,6 @@ function JudgeResult({ result, loading, onRetake, onAnswer, onRestart, onCorrect
         )}
       </div>
 
-      <p className="attempt">촬영 {j.attempt} / {j.max_attempts}</p>
-
       {/* 판정 근거: AI가 본 것 + 기준 출처 (발표 때 신뢰도 설명용) */}
       {result.observation && (
         <details className="evidence">
