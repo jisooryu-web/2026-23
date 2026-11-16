@@ -184,9 +184,9 @@ body {
 
 .workspace.has-result {
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  height: min(750px, calc(100vh - 64px));
+  height: min(750px, calc(100vh - 120px));
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   align-items: center;
 }
 
@@ -265,8 +265,8 @@ body {
 
 .judgement-panel {
   width: 100%;
-  height: fit-content;
-  max-height: calc(100vh - 64px);
+  height: auto;
+  max-height: 100%;
 
   min-width: 0;
   min-height: 0;
